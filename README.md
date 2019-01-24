@@ -19,6 +19,8 @@ iOS    : https://github.com/starrtc/starrtc-ios-demo
 
 voip服务器部署
 ==
+开放端口：10086
+
 ./voipServer -appid your_appid
 
 测试方法：下载客户端示例程序，修改“服务器配置”里面的应用ID和VOIP服务地址即可。
