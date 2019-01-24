@@ -1,9 +1,12 @@
 # 服务端程序
-服务端各程序正在一个一个开放中，敬请期待...
+
+现已开放voip服务端，可用于一对一视频的私有部署；
+
+其它服务端(IM消息系统，直播连麦，多人会议)正在一个一个开放中，敬请期待...
 
 支持CentOS 64bit，Ubuntu 64bit。
 
-<font color=#FF0000>使用SDK部署私有服务来实现一对一音视频功能，详见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-1.html)</font>
+使用SDK部署私有服务来实现一对一音视频功能，详见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-1.html)
 
 
 客户端程序
