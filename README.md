@@ -9,7 +9,7 @@
 使用SDK部署私有服务来实现一对一音视频功能，详见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-1.html)
 
 
-客户端程序
+客户端示例程序
 ==
 Android: https://github.com/starrtc/starrtc-android-demo
 
