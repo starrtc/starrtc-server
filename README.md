@@ -1,8 +1,15 @@
 # 服务端程序
-服务端程序正在整理中，敬请期待...
+服务端各程序正在一个一个开放中，敬请期待...
 
-部署步骤
+客户端程序
 ==
-1，下载服务端程序
+Android: https://github.com/starrtc/starrtc-android-demo
 
-2，运行。
+iOS    : https://github.com/starrtc/starrtc-ios-demo
+
+更多   : https://docs.starrtc.com/en/download/
+
+voip服务器部署
+==
+./voipServer -appid 1
+
