@@ -3,7 +3,7 @@
 
 支持CentOS 64bit，Ubuntu 64bit。
 
-<font color="red">使用SDK部署私有服务来实现一对一音视频功能，详见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-1.html)</font>
+<font color=#FF0000>使用SDK部署私有服务来实现一对一音视频功能，详见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-1.html)</font>
 
 
 客户端程序
