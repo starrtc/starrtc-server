@@ -26,8 +26,8 @@ voip服务器部署
 ```java
 chmod +x voipServer
 ./voipServer -appid your_appid
-后台启动nohup ./voipServer -appid your_appid > voipServer.log 2>&1 &
-查看日志tail -f voipServer.log
+或者后台启动：nohup ./voipServer -appid your_appid > voipServer.log 2>&1 &
+查看日志：tail -f voipServer.log
 ```
 
 测试方法：下载客户端示例程序，修改“服务器配置”里面的应用ID和VOIP服务地址即可。
