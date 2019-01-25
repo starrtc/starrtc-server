@@ -47,3 +47,10 @@ QQ ： 2162498688
 微信：starRTC
 
 QQ群：807242783
+
+参考
+==
+[阿里云修改安全组规则](https://help.aliyun.com/document_detail/101471.html)
+
+[腾讯云安全组操作指南](https://cloud.tencent.com/document/product/213/18197)
+
