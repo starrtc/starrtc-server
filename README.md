@@ -77,8 +77,16 @@ IM全套服务，分为3个服务端程序，msgServer、chatDBServer、groupSer
 
 要验证自己服务是否正常，可以下载demo，并在设置里，确认是私有模式，然后填写你自己的服务ip。
 
+模式选择界面：
 
+![模式选择界面](assets/select.jpg)
 
+私有部署设置界面：
+
+![私有部署设置界面](assets/private.jpg)
+
+公有云设置界面：
+![模式选择界面](assets/public.jpg)
 Contact
 =====
 QQ ： 2162498688
