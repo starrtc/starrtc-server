@@ -75,7 +75,7 @@ IM全套服务，分为3个服务端程序，msgServer、chatDBServer、groupSer
 
 走自己服务端的，请使用私有模式来init SDK，详见[文档](https://docs.starrtc.com/zh-cn/docs/android-single-server-init.html) 。
 
-要验证自己服务是否正常，可以下载demo，并在设置里，确认是私有模式，然后填写你自己的服务ip。
+要验证自己服务是否正常，可以下载demo，并在设置里，确认是私有模式，然后填写你自己的服务ip。修改后需要杀掉app重新启动生效。
 
 
 模式选择界面：
