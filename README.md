@@ -89,6 +89,7 @@ IM全套服务，分为3个服务端程序，msgServer、chatDBServer、groupSer
 公有云设置界面：
 
 ![模式选择界面](assets/public.png)
+
 Contact
 =====
 QQ ： 2162498688
