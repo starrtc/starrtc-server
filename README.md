@@ -10,7 +10,9 @@ IM服务端：可用于单聊（如文字聊天），私信，群聊，信令，
 
 支持CentOS 64bit，Ubuntu 64bit。
 
-第1步：登录[starRTC后台](https://www.starrtc.com/login.html)获取appid。
+部署步骤：
+
+第1步：登录[starRTC后台](https://www.starrtc.com/login.html)获取appid；
 
 第2步：部署各服务端程序，具体如下：
 
@@ -30,11 +32,9 @@ IM全套服务，分为3个服务端程序，分别是:
 
 消息服务端msgServer、离线消息数据服务端chatDBServer，群管理服务端groupServer，分别启动即可。
 
-如果只启动msgServer，就可以当做信令服务器使用；只需要单聊服务的，不需要启动groupServer。
+只需要单聊的，不需要启动groupServer。
 
-3个服务器会互相有连接，目前端口都是写死的，不存在端口占用的情况下，会自动连接，
-
-等稳定后修改为配置文件模式，这样可以修改端口。
+可以保持自己原有的im系统不变，用我们的im系统作为voip等服务的信令服务。
 ```java
 chmod +x msgServer chatDBServer groupServer
 ./msgServer    -appid your_appid
