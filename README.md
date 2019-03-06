@@ -19,8 +19,8 @@ IM服务端：可用于单聊（如文字聊天），私信，群聊，信令，
 voip服务端部署
 ==
 ```java
-chmod +x voipServer
-./voipServer -appid your_appid
+加可执行权限：chmod +x voipServer
+启动：./voipServer -appid your_appid
 或者后台启动：nohup ./voipServer -appid your_appid > voipServer.log 2>&1 &
 查看日志：tail -f voipServer.log
 ```
@@ -36,7 +36,8 @@ IM全套服务，分为3个服务端程序，分别是:
 
 可以保持自己原有的im系统不变，用我们的im系统作为voip等服务的信令服务。
 ```java
-chmod +x msgServer chatDBServer groupServer
+加可执行权限：chmod +x msgServer chatDBServer groupServer
+启动：
 ./msgServer    -appid your_appid
 ./chatDBServer -appid your_appid
 ./groupServer  -appid your_appid
