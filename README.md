@@ -85,6 +85,8 @@ QQ群：807242783
 
 参考
 ==
+[端口连接性测试](https://github.com/starrtc/starrtc-server/wiki/TCP%E4%B8%8EUDP%E7%AB%AF%E5%8F%A3%E8%BF%9E%E6%8E%A5%E6%80%A7%E6%B5%8B%E8%AF%95)
+
 [阿里云修改安全组规则](https://help.aliyun.com/document_detail/101471.html)
 
 [腾讯云安全组操作指南](https://cloud.tencent.com/document/product/213/18197)
