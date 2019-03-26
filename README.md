@@ -53,11 +53,7 @@ nohup ./groupServer  -appid your_appid > msgServer.log 2>&1 &
 ```
 需要开放端口：
 
-msgServer 		19903 tcp(对外) 19902 tcp(本地)
-
-chatDBServer 	19908 tcp(本地)
-
-groupServer 	19923 tcp(本地)
+msgServer 		19903 tcp
 
 测试方法
 =====
