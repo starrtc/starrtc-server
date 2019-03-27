@@ -1,20 +1,23 @@
 # 服务端程序免费私有部署
 
-现已开放:
+以下服务端均完全免费，无鉴权，可用于局域网内部署，现已开放:
 
 voip服务端：可用于一对一视频通话；
 
 IM服务端：可用于单聊（如文字聊天），私信，群聊，信令，聊天室；
 
-其它服务端(聊天室，直播连麦，多人会议)正在一个一个开放中，敬请期待...
+chatRoom服务端：可用于多人聊天室；
+
+liveSrc服务端：可用于多人在线会议，并支持服务器转发rtmp流到其他地址；
+
+
+只剩直播连麦服务，将于近期开放，敬请期待...
 
 支持CentOS 64bit，Ubuntu 64bit。
 
 部署步骤：
 
-第1步：登录[starRTC后台](https://www.starrtc.com/login.html)获取appid；
-
-第2步：下载服务端程序： git clone https://github.com/starrtc/starrtc-server.git
+第1步：下载服务端程序： git clone https://github.com/starrtc/starrtc-server.git
 
 第3步：切换为root用户： sudo su
 
@@ -24,8 +27,8 @@ voip服务端部署
 ==
 ```java
 加可执行权限：chmod +x voipServer
-启动(请将your_appid替换成你自己实际的appid)：./voipServer -appid your_appid       
-或者后台启动：nohup ./voipServer -appid your_appid > voipServer.log 2>&1 &
+启动：./voipServer     
+或者后台启动：nohup ./voipServer > voipServer.log 2>&1 &
 查看日志：tail -f voipServer.log
 ```
 需要开放端口：10086 udp
@@ -44,18 +47,43 @@ IM全套服务，分为3个服务端程序，分别是:
 ```java
 加可执行权限：chmod +x msgServer chatDBServer groupServer
 启动：
-./msgServer    -appid your_appid
-./chatDBServer -appid your_appid
-./groupServer  -appid your_appid
+./msgServer    
+./chatDBServer 
+./groupServer  
 或者后台启动：
-nohup ./msgServer    -appid your_appid > msgServer.log 2>&1 &
-nohup ./chatDBServer -appid your_appid > msgServer.log 2>&1 &
-nohup ./groupServer  -appid your_appid > msgServer.log 2>&1 &
+nohup ./msgServer     > msgServer.log 2>&1 &
+nohup ./chatDBServer  > msgServer.log 2>&1 &
+nohup ./groupServer   > msgServer.log 2>&1 &
 
 ```
 需要开放端口：
 
 msgServer 		19903 tcp
+
+
+chatRoom服务端部署
+==
+```java
+加可执行权限：chmod +x chatRoomServer
+启动：./chatRoomServer     
+或者后台启动：nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
+查看日志：tail -f chatRoomServer.log
+```
+需要开放端口：19906 tcp
+
+
+
+liveSrc服务端部署
+==
+```java
+加可执行权限：chmod +x liveSrcServer
+启动：./liveSrcServer     
+或者后台启动：nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
+查看日志：tail -f liveSrcServer.log
+```
+需要开放端口：19931 udp
+
+
 
 测试方法
 =====
