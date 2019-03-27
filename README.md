@@ -24,7 +24,7 @@ voip服务端部署
 ==
 ```java
 加可执行权限：chmod +x voipServer
-启动：./voipServer -appid your_appid
+启动(请将your_appid替换成你自己实际的appid)：./voipServer -appid your_appid       
 或者后台启动：nohup ./voipServer -appid your_appid > voipServer.log 2>&1 &
 查看日志：tail -f voipServer.log
 ```
