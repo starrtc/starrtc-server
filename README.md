@@ -16,7 +16,9 @@ IM服务端：可用于单聊（如文字聊天），私信，群聊，信令，
 
 第2步：下载服务端程序： git clone https://github.com/starrtc/starrtc-server.git
 
-第3步：部署各服务端程序，具体如下：
+第3步：切换为root用户： sudo su
+
+第4步：部署各服务端程序，具体如下：
 
 voip服务端部署
 ==
