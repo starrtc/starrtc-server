@@ -4,7 +4,7 @@
 
 voip服务端：可用于一对一视频通话；
 
-IM服务端：可用于单聊（如文字聊天），私信，群聊，信令，聊天室；
+IM服务端：可用于单聊（如文字聊天），私信，群聊，信令；
 
 chatRoom服务端：可用于多人聊天室；
 
@@ -19,9 +19,9 @@ liveSrc服务端：可用于多人在线会议，并支持服务器转发rtmp流
 
 第1步：下载服务端程序： git clone https://github.com/starrtc/starrtc-server.git
 
-第3步：切换为root用户： sudo su
+第2步：切换为root用户： sudo su
 
-第4步：部署各服务端程序，具体如下：
+第3步：部署各服务端程序，具体如下：
 
 voip服务端部署
 ==
@@ -110,6 +110,8 @@ QQ ： 2162498688
 微信：starRTC
 
 QQ群：807242783
+
+遇到问题请先根据https://github.com/starrtc/starrtc-server/wiki自查，还不能解决请加群反馈。
 
 参考
 ==
