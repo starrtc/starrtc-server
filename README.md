@@ -111,7 +111,7 @@ QQ ： 2162498688
 
 QQ群：807242783
 
-遇到问题请先根据https://github.com/starrtc/starrtc-server/wiki自查，还不能解决请加群反馈。
+遇到问题请先根据 https://github.com/starrtc/starrtc-server/wiki 自查，还不能解决请加群反馈。
 
 参考
 ==
