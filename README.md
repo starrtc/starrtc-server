@@ -123,4 +123,4 @@ QQ群：807242783
 
 许可证
 ==
-[996ICU License](https://github.com/starrtc/starrtc-server/raw/master/LICENSE.996icu.zh-hans)
+[996ICU License](https://github.com/starrtc/starrtc-server/raw/master/LICENSE.996icu)
