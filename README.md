@@ -21,14 +21,14 @@ liveSrc服务端：可用于多人在线会议，并支持服务器转发rtmp流
 
 第2步：切换为root用户： sudo su
 
-第3步：部署各服务端程序，具体如下：
+第3步：给所有服务端程序加可执行权限: chmod +x *Server
+
+第4步：部署各服务端程序，具体如下：
 
 voip服务端部署
 ==
 ```java
-加可执行权限：chmod +x voipServer
-启动：./voipServer     
-或者后台启动：nohup ./voipServer > voipServer.log 2>&1 &
+后台启动：nohup ./voipServer > voipServer.log 2>&1 &
 查看日志：tail -f voipServer.log
 ```
 需要开放端口：10086 udp
@@ -45,12 +45,7 @@ IM全套服务，分为3个服务端程序，分别是:
 
 可以保持自己原有的im系统不变，用我们的im系统作为voip等服务的信令服务。
 ```java
-加可执行权限：chmod +x msgServer chatDBServer groupServer
-启动：
-./msgServer    
-./chatDBServer 
-./groupServer  
-或者后台启动：
+后台启动：
 nohup ./msgServer     > msgServer.log 2>&1 &
 nohup ./chatDBServer  > msgServer.log 2>&1 &
 nohup ./groupServer   > msgServer.log 2>&1 &
@@ -60,25 +55,19 @@ nohup ./groupServer   > msgServer.log 2>&1 &
 
 msgServer 		19903 tcp
 
-
 chatRoom服务端部署
 ==
 ```java
-加可执行权限：chmod +x chatRoomServer
-启动：./chatRoomServer     
-或者后台启动：nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
+后台启动：nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 查看日志：tail -f chatRoomServer.log
 ```
 需要开放端口：19906 tcp
 
 
-
 liveSrc服务端部署
 ==
-```java
-加可执行权限：chmod +x liveSrcServer
-启动：./liveSrcServer     
-或者后台启动：nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
+```java  
+后台启动：nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 查看日志：tail -f liveSrcServer.log
 ```
 需要开放端口：19931 udp
