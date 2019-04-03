@@ -110,6 +110,3 @@ QQ群：807242783
 
 [腾讯云安全组操作指南](https://cloud.tencent.com/document/product/213/18197)
 
-许可证
-==
-[996ICU License](https://github.com/starrtc/starrtc-server/raw/master/LICENSE.996icu)
