@@ -2,18 +2,69 @@
 
 以下服务端均完全免费，无鉴权，可用于局域网内部署，现已开放:
 
-voip服务端：可用于一对一视频通话；
+<style>
+table th:first-of-type {
+    width: 100px;
+}
+</style>
+<table>
+    <thead>
+        <tr>
+            <th>服务端</th>
+            <th>功能</th> 
+			<th>备注</th>	
+        </tr>
+    </thead>
+    <tbody>
+		<tr>
+       <td>voipServer</td>
+	   <td>一对一视频通话</td>
+	  <td>需要搭配msgServer使用</td>	  	   
+	   </tr>
+	   
+	   <tr>
+       <td>msgServer</td>
+	   <td>单聊（如文字聊天），私信，信令</td>
+	  <td></td>		   
+	   </tr>
+	   
+	   <tr>
+       <td>chatDBServer</td>
+	   <td>离线消息存储</td>
+	  <td></td>		   
+	   </tr>
+	   
+	   <tr>
+       <td>groupServer</td>
+	   <td>群聊</td>
+	  <td></td>		   
+	   </tr>
+	   
+	   <tr>
+       <td>chatRoomServer</td>
+	   <td>多人聊天室</td>
+	  <td></td>		   
+	   </tr>
+	   
+	   
+	   <tr>
+       <td>liveSrcServer</td>
+	   <td>多人视频会议，RTMP推流</td>
+	  <td></td>		   
+	   </tr>
+	   
+	   <tr>
+       <td>liveVdnServer</td>
+	   <td>互动连麦直播</td>
+	  <td>将于近期开放，敬请期待</td>		   
+	   </tr>
+	   
+    </tbody>
+</table>
 
-IM服务端：可用于单聊（如文字聊天），私信，群聊，信令；
-
-chatRoom服务端：可用于多人聊天室；
-
-liveSrc服务端：可用于多人在线会议，并支持服务器转发rtmp流到其他地址；
 
 
-只剩直播连麦服务，将于近期开放，敬请期待...
-
-支持CentOS 64bit，Ubuntu 64bit。
+<span style="color:red">**支持CentOS 64bit，Ubuntu 64bit**</span>。
 
 部署步骤（请切换为root用户或者用sudo执行）：
 
@@ -58,6 +109,7 @@ msgServer 		19903 tcp
 chatRoom服务端部署
 ==
 ```java
+后台启动：
 nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 ```
 需要开放端口：19906 tcp
@@ -66,6 +118,7 @@ nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 liveSrc服务端部署
 ==
 ```java  
+后台启动：
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
 需要开放端口：19931 udp
@@ -74,11 +127,10 @@ nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 
 测试方法
 =====
-下载[客户端示例程序](https://docs.starrtc.com/en/download/)，修改配置即可，具体操作步骤如下：
+下载[客户端示例程序](https://docs.starrtc.com/en/download/)，
 
 打开"设置->服务器配置"，点击"配置切换"，选择"私有部署"，然后填写你自己的服务器ip。
 
-配置修改后需要杀掉app重新启动才能生效。
 
 客户端开发
 =====
