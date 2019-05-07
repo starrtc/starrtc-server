@@ -8,7 +8,7 @@
 | voipServer    | 一对一视频通话 					  | 需要搭配msgServer使用 |
 | msgServer     | 单聊（如文字聊天），私信，信令      |    |
 | chatDBServer  | 离线消息存储      				  |     |
-| groupServer   | 群聊      					      |     |
+| groupServer   | 群聊      					      | 如果只需要单聊，不需要群聊的话，不用启动    |
 | chatRoomServer| 多人聊天室      					  |     |
 | liveSrcServer | 多人视频会议，RTMP推流      		  |     |
 | liveVdnServer | 互动连麦直播     				      |  将于近期开放，敬请期待   |
