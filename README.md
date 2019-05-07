@@ -15,21 +15,22 @@ liveSrc服务端：可用于多人在线会议，并支持服务器转发rtmp流
 
 支持CentOS 64bit，Ubuntu 64bit。
 
-部署步骤：
+部署步骤（请切换为root用户或者用sudo执行）：
 
 第1步：下载服务端程序： git clone https://github.com/starrtc/starrtc-server.git
 
-第2步：切换为root用户： sudo su
+第2步：cd starrtc-server进入下载目录，给所有服务端程序加可执行权限: chmod +x *Server  
 
-第3步：给所有服务端程序加可执行权限: chmod +x *Server
+第3步：部署各服务端程序，具体如下：
 
-第4步：部署各服务端程序，具体如下：
+其中.log后缀文件为日志文件，可通过命令tail -f xxx.log查看相关日志。
 
 voip服务端部署
 ==
 ```java
-后台启动：nohup ./voipServer > voipServer.log 2>&1 &
-查看日志：tail -f voipServer.log
+后台启动：
+nohup ./voipServer > voipServer.log 2>&1 &
+
 ```
 需要开放端口：10086 udp
 
@@ -47,9 +48,8 @@ IM全套服务，分为3个服务端程序，分别是:
 ```java
 后台启动：
 nohup ./msgServer     > msgServer.log 2>&1 &
-nohup ./chatDBServer  > msgServer.log 2>&1 &
-nohup ./groupServer   > msgServer.log 2>&1 &
-
+nohup ./chatDBServer  > chatDBServer.log 2>&1 &
+nohup ./groupServer   > groupServer.log 2>&1 &
 ```
 需要开放端口：
 
@@ -58,8 +58,7 @@ msgServer 		19903 tcp
 chatRoom服务端部署
 ==
 ```java
-后台启动：nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
-查看日志：tail -f chatRoomServer.log
+nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 ```
 需要开放端口：19906 tcp
 
@@ -67,8 +66,7 @@ chatRoom服务端部署
 liveSrc服务端部署
 ==
 ```java  
-后台启动：nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
-查看日志：tail -f liveSrcServer.log
+nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
 需要开放端口：19931 udp
 
