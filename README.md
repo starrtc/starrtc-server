@@ -2,69 +2,20 @@
 
 以下服务端均完全免费，无鉴权，可用于局域网内部署，现已开放:
 
-<style>
-table th:first-of-type {
-    width: 100px;
-}
-</style>
-<table>
-    <thead>
-        <tr>
-            <th>服务端</th>
-            <th>功能</th> 
-			<th>备注</th>	
-        </tr>
-    </thead>
-    <tbody>
-		<tr>
-       <td>voipServer</td>
-	   <td>一对一视频通话</td>
-	  <td>需要搭配msgServer使用</td>	  	   
-	   </tr>
-	   
-	   <tr>
-       <td>msgServer</td>
-	   <td>单聊（如文字聊天），私信，信令</td>
-	  <td></td>		   
-	   </tr>
-	   
-	   <tr>
-       <td>chatDBServer</td>
-	   <td>离线消息存储</td>
-	  <td></td>		   
-	   </tr>
-	   
-	   <tr>
-       <td>groupServer</td>
-	   <td>群聊</td>
-	  <td></td>		   
-	   </tr>
-	   
-	   <tr>
-       <td>chatRoomServer</td>
-	   <td>多人聊天室</td>
-	  <td></td>		   
-	   </tr>
-	   
-	   
-	   <tr>
-       <td>liveSrcServer</td>
-	   <td>多人视频会议，RTMP推流</td>
-	  <td></td>		   
-	   </tr>
-	   
-	   <tr>
-       <td>liveVdnServer</td>
-	   <td>互动连麦直播</td>
-	  <td>将于近期开放，敬请期待</td>		   
-	   </tr>
-	   
-    </tbody>
-</table>
+
+| 服务端        | 功能           | 备注  |
+| ------------- |:-------------: | -----:|
+| voipServer    | 一对一视频通话 					  | 需要搭配msgServer使用 |
+| msgServer     | 单聊（如文字聊天），私信，信令      |    |
+| chatDBServer  | 离线消息存储      				  |     |
+| groupServer   | 群聊      					      |     |
+| chatRoomServer| 多人聊天室      					  |     |
+| liveSrcServer | 多人视频会议，RTMP推流      		  |     |
+| liveVdnServer | 互动连麦直播     				      |  将于近期开放，敬请期待   |
 
 
 
-<span style="color:red">**支持CentOS 64bit，Ubuntu 64bit**</span>。
+**支持CentOS 64bit，Ubuntu 64bit**。
 
 部署步骤（请切换为root用户或者用sudo执行）：
 
