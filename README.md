@@ -86,6 +86,8 @@ nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 
 rtsp拉流服务端部署
 ==
+用于拉取第三方rtsp流，并转换为starRTC协议转推至liveSrcServer，然后就可以在各终端的在线会议或互动直播中播放这个流了。
+
 ```java  
 后台启动：
 nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
