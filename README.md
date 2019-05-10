@@ -11,7 +11,8 @@
 | groupServer   | 群聊      					      | 如果只需要单聊，不需要群聊的话，不用启动    |
 | chatRoomServer| 多人聊天室      					  |     |
 | liveSrcServer | 多人视频会议，RTMP推流      		  |     |
-| liveVdnServer | 互动连麦直播     				      |  将于近期开放，敬请期待   |
+| liveVdnServer | 互动连麦直播     				      |     |
+| liveProxyServer | RTSP 拉流服务端     				      |     |
 
 
 
@@ -73,6 +74,45 @@ liveSrc服务端部署
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
 需要开放端口：19931 udp
+
+
+liveVdn服务端部署
+==
+```java  
+后台启动：
+nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
+```
+需要开放端口：19928 udp
+
+rtsp拉流服务端部署
+==
+```java  
+后台启动：
+nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
+```
+需要开放端口：19932 tcp
+
+使用方法：
+
+在demo中可以在设置界面测试该功能，也可以自己使用HTTP方式调用：
+
+创建channelId并推流（streamType暂时只支持rtsp），接口返回channelId：
+
+http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&roomLiveType=0&roomId=xxxx&extra=xxxxx (roomId和extra为可选参数)
+
+推流到指定的channelId：
+
+http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&channelId=xxxx
+
+关闭指定的推流（停止拉流，channelId在列表存在）：
+
+http://www.xxx.com:19932/close?channelId=xxxx
+
+删除channelId（停止拉流，同时删除channelId）：
+
+http://www.xxx.com:19932/delete?channelId=xxxx
+
+
 
 
 
