@@ -1,0 +1,4 @@
+log/
+msgChatDB/
+*.log
+.db

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+git config core.fileMode false
 chmod +x *Server
 
 nohup ./msgServer     > msgServer.log 2>&1 &
