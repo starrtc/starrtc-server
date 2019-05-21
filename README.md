@@ -16,7 +16,7 @@
 
 
 
-**支持CentOS 64bit，Ubuntu 64bit**。
+**支持CentOS 64bit，Ubuntu 64bit**。Windows上请自行安装虚拟机或docker测试。
 
 部署步骤（请切换为root用户或者用sudo执行）：
 
