@@ -1,4 +1,4 @@
 log/
 msgChatDB/
 *.log
-.db
+*.db
