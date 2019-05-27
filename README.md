@@ -15,6 +15,7 @@
 | liveProxyServer | RTSP 拉流服务端     				      |     |
 
 
+web目录里面是支持web私有部署的服务端程序与自签名证书。根目录里面不是支持web端私有部署的服务端程序。
 
 **支持CentOS 64bit，Ubuntu 64bit**。Windows上请自行安装虚拟机或docker测试。
 
