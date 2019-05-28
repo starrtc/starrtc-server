@@ -53,9 +53,6 @@ nohup ./msgServer     > msgServer.log 2>&1 &
 nohup ./chatDBServer  > chatDBServer.log 2>&1 &
 nohup ./groupServer   > groupServer.log 2>&1 &
 ```
-需要开放端口：
-
-msgServer 		19903 tcp
 
 chatRoom服务端部署
 ==
@@ -70,8 +67,6 @@ liveSrc服务端部署
 后台启动：
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
-
-
 
 liveVdn服务端部署
 ==
