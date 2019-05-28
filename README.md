@@ -36,8 +36,6 @@ voip服务端部署
 nohup ./voipServer > voipServer.log 2>&1 &
 
 ```
-需要开放端口：10086 udp
-
 注：也需要部署msgServer,用于传输呼叫，接听等消息。
 
 IM服务端部署
@@ -65,8 +63,6 @@ chatRoom服务端部署
 后台启动：
 nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 ```
-需要开放端口：19906 tcp
-
 
 liveSrc服务端部署
 ==
@@ -74,7 +70,7 @@ liveSrc服务端部署
 后台启动：
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
-需要开放端口：19931 udp
+
 
 
 liveVdn服务端部署
@@ -83,7 +79,6 @@ liveVdn服务端部署
 后台启动：
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 ```
-需要开放端口：19928 udp
 
 rtsp拉流服务端部署
 ==
@@ -93,7 +88,6 @@ rtsp拉流服务端部署
 后台启动：
 nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
 ```
-需要开放端口：19932 tcp
 
 使用方法：
 
@@ -115,8 +109,16 @@ http://www.xxx.com:19932/close?channelId=xxxx
 
 http://www.xxx.com:19932/delete?channelId=xxxx
 
-
-
+需要开放端口
+====
+| 服务端        | 端口           | 
+| ------------- |:-------------  |
+| msgServer     | 19903(tcp)  29991(https信任测试 tcp)      |    
+| voipServer    | 10086 udp 10087(websocket tcp) 10088(webrtc udp) 44446(P2P通讯 udp)  29992(https信任测试 tcp) | 
+| chatRoomServer| 19906 tcp    29993(https信任测试 tcp)  					  |     
+| liveSrcServer | 19931 udp  19934(websocket tcp) 19935(webrtc udp) 29994(https信任测试 tcp)   		  |     
+| liveVdnServer | 19928 udp    	19940(websocket tcp) 19941(webrtc udp) 29995(https信任测试 tcp)			      |    
+| liveProxyServer |19932 tcp  			  |   
 
 
 测试方法
