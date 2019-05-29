@@ -1,6 +1,6 @@
 # 服务端程序免费私有部署
 
-以下服务端均完全免费(采用C语言开发)，无鉴权，可用于局域网内部署，现已开放:
+以下服务端均完全免费(采用C语言开发)，无鉴权，可用于腾讯云，阿里云或局域网内部署，现已开放:
 
 
 | 服务端        | 功能           | 备注  |
@@ -10,8 +10,8 @@
 | chatDBServer  | 离线消息存储      				  |     |
 | groupServer   | 群聊      					      | 如果只需要单聊，不需要群聊的话，不用启动    |
 | chatRoomServer| 多人聊天室      					  |     |
-| liveSrcServer | 多人视频会议，RTMP推流      		  |     |
-| liveVdnServer | 互动连麦直播     				      |     |
+| liveSrcServer | 多人视频会议  RTMP推流      		  |     |
+| liveVdnServer | 互动连麦直播，vdn分发网络		      |     |
 | liveProxyServer | RTSP 拉流服务端     				      |     |
 | videoRecServer | 录制录像功能     				      |     |
 
@@ -71,6 +71,7 @@ nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 
 liveVdn服务端部署
 ==
+互动直播，观众不限人数
 ```java  
 后台启动：
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
