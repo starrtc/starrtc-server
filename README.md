@@ -13,6 +13,7 @@
 | liveSrcServer | 多人视频会议，RTMP推流      		  |     |
 | liveVdnServer | 互动连麦直播     				      |     |
 | liveProxyServer | RTSP 拉流服务端     				      |     |
+| videoRecServer | 录制录像功能     				      |     |
 
 
 web目录里面是支持web私有部署的服务端程序与自签名证书。根目录里面的服务端程序不支持web端私有部署。
@@ -73,6 +74,16 @@ liveVdn服务端部署
 ```java  
 后台启动：
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
+```
+
+
+录制服务端部署
+==
+目前用于liveSrcServer和voipServer的视频录像功能，视频以flv的格式保存到RECFOLDER目录，文件名格式为：用户名_日期_时_分_秒，如userId_20190529_15_08_02.flv
+
+```java  
+后台启动：
+nohup ./videoRecServer > videoRecServer.log 2>&1 &
 ```
 
 rtsp拉流服务端部署
