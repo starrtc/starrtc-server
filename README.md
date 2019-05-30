@@ -80,7 +80,11 @@ nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 
 录制服务端部署
 ==
-目前用于liveSrcServer和voipServer的视频录像功能，视频以flv的格式保存到RECFOLDER目录，文件名格式为：用户名_日期_时_分_秒，如userId_20190529_15_08_02.flv
+目前用于liveSrcServer和voipServer的视频录像功能，视频以flv的格式保存到RECFOLDER目录，
+
+文件名格式为：用户名_日期_时_分_秒，如userId_20190529_15_08_02.flv
+
+开启此服务就会打开录制功能，如果想停止录制，可以关闭此服务。
 
 ```java  
 后台启动：
