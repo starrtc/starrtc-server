@@ -141,7 +141,7 @@ http://www.xxx.com:19932/delete?channelId=xxxx
 
 客户端开发
 =====
-基于私有部署服务端开发自己的客户端，参见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-single-server-init.html)，
+基于私有部署服务端开发自己的客户端，参见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-3b.html)，
 
 示例代码参见：https://docs.starrtc.com/en/download/
 
