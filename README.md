@@ -159,6 +159,10 @@ QQ群：807242783
 
 遇到问题请先根据 https://github.com/starrtc/starrtc-server/wiki 自查，还不能解决请加群反馈。
 
+更新记录
+=====
+https://github.com/starrtc/starrtc-server/wiki/Changelog
+
 参考
 ==
 [端口连接性测试](https://github.com/starrtc/starrtc-server/wiki/TCP%E4%B8%8EUDP%E7%AB%AF%E5%8F%A3%E8%BF%9E%E6%8E%A5%E6%80%A7%E6%B5%8B%E8%AF%95)

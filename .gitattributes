@@ -1,1 +1,7 @@
 *.sh linguist-language=C
+*.cs linguist-language=C
+*.go linguist-language=C
+*.php linguist-language=C
+*.js linguist-language=C
+*.py linguist-language=C
+*.java linguist-language=C
