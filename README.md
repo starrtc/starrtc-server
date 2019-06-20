@@ -16,15 +16,17 @@
 | videoRecServer | 录制录像功能     				      |     |
 
 
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) web目录里面是支持web端的服务端程序与自签名证书。根目录里面的服务端程序不支持web端。
+![#f03c15](https://placehold.it/15/f03c15/000000?text=+) web-supported目录里面是支持web端的服务端程序与自签名证书。do-not-support-web目录里面的服务端程序不支持web端。
 
 **支持CentOS 64bit，Ubuntu 64bit**。Windows上请自行安装虚拟机或docker测试。
 
-部署步骤（请切换为root用户或者用sudo执行）：
+![#f03c15](https://placehold.it/15/f03c15/000000?text=+) 部署步骤（请切换为root用户或者用sudo执行）：
 
 第1步：下载服务端程序： git clone https://github.com/starrtc/starrtc-server.git
+		
+		然后进入相应目录，直接执行chmod +x *.sh && ./start.sh 即部署成功！如果想单独运行，请继续下面的步骤。
 
-第2步：cd starrtc-server进入下载目录，给所有服务端程序加可执行权限: chmod +x *Server  
+第2步：进入相应目录，给所有服务端程序加可执行权限: chmod +x *Server  
 
 第3步：部署各服务端程序，具体如下：
 
@@ -36,6 +38,7 @@ voip服务端部署
 后台启动：
 nohup ./voipServer > voipServer.log 2>&1 &
 
+刚开始为了验证是否启动成功，可以不后台启动，而是通过运行 ./voipServer 直接看输出日志是否成功，成功了以后就可以后台启动。
 ```
 注：也需要部署msgServer,用于传输呼叫，接听等消息。
 
