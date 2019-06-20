@@ -11,7 +11,4 @@ $api_config_dir = dirname(__FILE__);
 require_once($api_config_dir . '/include/pubFun.php');
 
 
-
-define('appid', 	 'your appid');
-define('secret',     'your secret');
-define('guardToken', 'your guardToken');
+define('log_file',  $api_config_dir . '/log.txt');
