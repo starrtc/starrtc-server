@@ -50,6 +50,27 @@ if(!strcasecmp($action, 'AEC_VOIP_USER_HANGUP')){
 }
 
 
+//===================聊天室事件通知===============
+// https://docs.starrtc.com/zh-cn/docs/aec-chatroom.html
+if(!strcasecmp($action, 'AEC_CHATROOM_CREATE')){
+	//TODO
+	logf("聊天室新建请求");
+	echo_1('success');		
+}
+
+if(!strcasecmp($action, 'AEC_CHATROOM_DELETE')){
+	//TODO
+	logf("请求删除聊天室");
+	echo_1('success');		
+}
+
+
+if(!strcasecmp($action, 'AEC_CHATROOM_IS_EXIST')){
+	//TODO
+	logf("查询聊天室是否存在");
+	echo_0('没有权限');			
+}
+
 
 //===================群事件通知===============
 // https://docs.starrtc.com/zh-cn/docs/aec-group.html
