@@ -240,4 +240,19 @@ if(!strcasecmp($action, 'AEC_LIVE_USER_OFFLINE')){
 	echo_1('success');
 }
 
+//===============================其它事件通知==============
+// https://docs.starrtc.com/zh-cn/docs/aec-other.html
+if(!strcasecmp($action, 'AEC_MSG_SERVER_GET_PUSH_MODE')){
+	//TODO
+	
+	logf("获取某用户的推送模式");
+	echo_1(1);
+}
+
+if(!strcasecmp($action, 'AEC_MSG_SERVER_SET_PUSH_MODE')){
+	//TODO
+	
+	logf("设置某用户的推送模式");
+	echo_1(1);
+}
 echo_0('unkown action:'.$action);
