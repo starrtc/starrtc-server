@@ -12,6 +12,7 @@ function echo_1($data, $exit = 1){
 }
 
 function echo_0($data, $exit = 1){	
+	logf($data);
 	$retArr = array('status' => '0', 'data' => $data);
 	$json   = json_encode($retArr);	
 	echo $json;	
@@ -26,5 +27,34 @@ function logf($data){
 	fwrite($fp, $time.'  '.$data."\r\n");//记得a+w
 	fclose($fp);
 	
+}
+
+
+function addSuffix($ids){	
+	$ids_arr = explode(",", $ids);
+	$id_suffix_arr = array();
+	foreach($ids_arr as $id){
+		array_push($id_suffix_arr, $id.'_0');
+	}
+	$ids_suffix = implode(',', $id_suffix_arr);
+	return $ids_suffix;
+}
+
+
+function getPrefix($prefix_suffix){	
+	$index  = strpos($prefix_suffix, "_", 0); 
+	if($index){		
+		$prefix = substr($prefix_suffix, 0, $index);
+		return $prefix;
+	}	
+}
+
+//获取后缀
+function getSuffix($prefix_suffix){	
+	$index  = strpos($prefix_suffix, "_", 0); 
+	if($index){
+		$suffix  = substr($prefix_suffix, $index+1); 			
+		return $suffix;
+	}	
 }
 
