@@ -61,27 +61,19 @@ function updateUserGroupList($userId, $groupId){
                     $groupList_suffix = $groupList_suffix. ',' .$groupId.'_0';
                 }else{
                     $groupList_suffix = $groupId.'_0';
-                }    
-                $sql = "update `userGroup` set `groupList` = ? where `id` = ?";
-                if(!($pstmt = $g_writeMdb->prepare($sql))){
-                    return 14;
-                }
-                if($pstmt->execute(array($groupList_suffix, $id))){
-					return 0;
-                }else{
-                    return 15;
-                }
+                } 
+
+				$ret = update_userGroup($id, $groupList_suffix);				
+                if($ret != 0){
+                    return intval('23'.$ret);
+                }	
+				return 0;  				
             }else{//记录不存在，插入
-                $sql = "insert into userGroup (userId, groupList) values (?,?)";
-                if(!($pstmt = $g_writeMdb->prepare($sql))){
-                    return 16;
-                }
-				$groupId_suffix = $groupId.'_0';
-                if($pstmt->execute(array($userId, $groupId_suffix))){
-					return 0;
-                }else{
-                    return 17; //更新用户群列表失败
-                }
+				$ret = insert_userGroup($userId, $groupId);
+				if($ret != 0){
+					return intval('22'.$ret);
+				}
+                return 0;
             }
         }else{
             return 13;

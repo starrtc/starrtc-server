@@ -70,7 +70,7 @@ function delGroupIdFromUserGroup($userId, $groupId){
                 return 0;
             }
 			
-            $groupList = delGroupId_from_groupList($groupList, $groupId);				
+            $groupList = del_from_List($groupList, $groupId);				
             $sql = "update `userGroup` set `groupList`=? where `id` = ?";
             if(!($pstmt = $g_writeMdb->prepare($sql))){
                 return 16;

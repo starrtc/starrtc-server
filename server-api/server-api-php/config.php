@@ -12,19 +12,44 @@ define('writeServer',  'localhost');
 define('readServer',   'localhost');
 
 define('database',     'starRTC_private');
-define('username',     'root');
-define('password',     '2017Star@c0nn0110');
+define('username',     'xxx');
+define('password',     'xxx');
 
 
 // roomType
 define('CHAT_ROOM_TYPE_PUBLIC', 1);
 define('CHAT_ROOM_TYPE_LOGIN',  2);
 
-define('GROUP_DND',   	  1);//Do Not Disturb 群消息免打扰
+define('GROUP_PUSH',   	  0); 
+define('GROUP_DND',   	  1);//Do Not Disturb 群消息免打扰,  开启后该群的消息将不会推送给此用户
 
 
 
+define('liveType_meeting',    1);//聊天室表如果liveType字段为0，表示为纯IM聊天室
+define('liveType_live',       2);
 
+
+
+define('channelType_GROUP_SPECIFY', 1);
+define('channelType_LOGIN_SPECIFY', 2);
+define('channelType_GLOBAL_PUBLIC', 3);
+define('channelType_LOGIN_PUBLIC',  4);
+define('channelType_GROUP_PUBLIC',  5);
+
+
+define('ownerType_GROUP_CHANNEL', 1);//ownerType,区分是群的直播还是其它的
+define('ownerType_ROOM_CHANNEL',  2);
+
+define('NO_LIVE',  0);//直播状态：无直播, 
+define('LIVING', 1);//有直播
+define('LIVE_OFF', 2);//主播离开了
+
+
+
+define('MSG_PUSH_MODE_UNKNOW',        0);//未知（暂未获取到用户pushMode的状态，不推送）
+define('MSG_PUSH_MODE_ALL_OFF',       1);//关闭所有推送
+define('MSG_PUSH_MODE_ALL_ON',  	  2); //开启所有推送
+define('MSG_PUSH_MODE_ONLY_CALLING',  3);//仅开启推送voip通话请求信息
 
 
 $api_config_dir = dirname(__FILE__);

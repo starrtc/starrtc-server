@@ -11,8 +11,12 @@
 $aec_dir = dirname(__FILE__);
 require_once($aec_dir . '/config.php');
 require_once($aec_dir . '/include/room.php');
+require_once($aec_dir . '/include/group.php');
 require_once($aec_dir . '/include/group_create.php');
-	
+require_once($aec_dir . '/include/group_del.php');
+require_once($aec_dir . '/include/group_join.php');
+require_once($aec_dir . '/include/group_quit.php');
+require_once($aec_dir . '/include/channel.php');
 
 $data = rawurldecode(array_key_exists('data', $_REQUEST) ? $_REQUEST['data'] : 0);//接收服务端程序传过来的数据
 if(empty($data)){
@@ -30,256 +34,17 @@ if(empty($action)){
 	echo_0('action is empty');
 }
 
-
-
-$groupId   = array_key_exists('groupId', $dataArr)   ? $dataArr['groupId']   : 0;
-$roomId    = array_key_exists('roomId', $dataArr)    ? $dataArr['roomId']    : 0;
-
-$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
-
-
 process_voip_event($action, $dataArr);
 process_chatroom_event($action, $dataArr);
 process_group_event($action, $dataArr);
-
-
-
-//===================群事件通知===============
-// https://docs.starrtc.com/zh-cn/docs/aec-group.html
-function process_group_event($action, $dataArr){
-	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
-	
-	if(!strcasecmp($action, 'AEC_GROUP_CREATE')){
-		//TODO: 比如检查用户是否有权限创建群
-		
-		logf("$userId 想创建群");
-		// {"ts":"1561096441","action":"AEC_GROUP_CREATE","userId":"892500","addUsers":"892500","userDefineData":"888"}
-		
-		//addUsers :用逗号分开的群成员列表，里面已经包含了创建者。
-		$addUsers       = array_key_exists('addUsers',   $dataArr) ? $dataArr['addUsers'] : '';
-		$userDefineData = array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '';
-		$groupName      = $userDefineData;		//目前只传了群名，后面可以传自定义json	
-		
-		$ret = createGroup($userId, $groupName, $addUsers);
-		if($ret['ret'] != 0){	
-			echo_0('createGroup failed:'.$ret['ret']); 		
-		}		
-		$groupId = $ret['data']['groupId'];		
-		echo_1($groupId);	
-	}
-	
-	if(!strcasecmp($action, 'AEC_GROUP_SYNC_ALL')){
-		//TODO
-		
-		logf("服务端重启了，请求同步全部群成员");
-		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;		
-		$ret = getGroupList($groupId);
-		if($ret['ret'] != 0){
-			echo_0('get GroupList err'.$ret['ret']);	
-		}
-
-		$data = array();
-		if(!empty($ret['data']['groupList'])){// groupList表示这个群的所有群成员，用逗号分开。
-			$data['groupList']  = $ret['data']['groupList'];
-		}
-		if(!empty($ret['data']['ignoreList'])){//ignoreList为可选参数，表示对该群开启了消息免打扰的所有群成员，用逗号分开。
-			$data['ignoreList'] = $ret['data']['ignoreList'];
-		}	
-		echo_1($data);			
-	}
-	
-	if(!strcasecmp($action, 'AEC_GROUP_DEL')){
-		//TODO 表示用户想要删除群，可在此判断用户是否有删除权限，比如是否为创建者。如果有权限，可删除您服务器里面的群相关数据。
-		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;	
-		logf("$userId 想要删除群 $groupId");
-		
-		$ret = deleteGroup($userId, $groupId);	
-		if($ret != 0){	
-			echo_0('deleteGroup_failed:'.$ret); 		
-		}		
-		echo_1('deleteGroup_success');		
-	}
-	
-	
-	
-	
-	
-	
-	
-}
-
-
-
-
-
-
-
-
-
-
-
-if(!strcasecmp($action, 'AEC_GROUP_ADD_USER')){
-	//TODO
-	logf("新增群成员");
-	echo_1('success');		
-}
-
-
-if(!strcasecmp($action, 'AEC_GROUP_ADD_USER_AND_SYNC_ALL')){
-	//TODO
-	logf("新增群成员并同步全部群成员");
-	echo_0('没有权限');	
-}
-
-if(!strcasecmp($action, 'AEC_GROUP_REMOVE_USER')){
-	//TODO
-	logf("删除群成员");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_GROUP_REMOVE_USER_AND_SYNC_ALL')){
-	//TODO
-	logf("删除群成员并同步全部群成员");
-	echo_0('没有权限');		
-}
-
-
-if(!strcasecmp($action, 'AEC_SET_GROUP_PUSH_IGNORE')){
-	//TODO
-	logf("设置免打扰");
-	echo_1('success');		
-}
-
-
-if(!strcasecmp($action, 'AEC_SET_GROUP_PUSH_IGNORE_AND_SYNC_ALL')){
-	//TODO
-	logf("设置免打扰模式并同步群成员");
-	echo_0('没有权限');		
-}
-
-
-if(!strcasecmp($action, 'AEC_UNSET_GROUP_PUSH_IGNORE')){
-	//TODO
-	logf("取消免打扰");
-	echo_1('success');		
-}
-
-
-if(!strcasecmp($action, 'AEC_UNSET_GROUP_PUSH_IGNORE_AND_SYNC_ALL')){
-	//TODO
-	logf("取消免打扰并同步群成员");
-	echo_0('没有权限');			
-}
-
-
-//==============================直播事件通知========================
-//https://docs.starrtc.com/zh-cn/docs/aec-live.html
-if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GLOBAL_PUBLIC')){
-	//TODO
-	logf("创建GLOBAL_PUBLIC直播流");	
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_LOGIN_PUBLIC')){
-	//TODO
-	logf("创建LOGIN_PUBLIC直播流");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_PUBLIC')){
-	//TODO
-	logf("创建GROUP_PUBLIC直播流");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_APPLY_UPLOAD_CHANNEL')){
-	//TODO
-	
-	logf("申请上传");
-	echo_0('没有权限');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_SET_CHANNEL_UPLOADER')){
-	//TODO
-	
-	logf("设置上传者");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_UNSET_CHANNEL_UPLOADER')){
-	//TODO
-	
-	logf("取消上传权限");
-	echo_1('success');	
-}
-
-
-if(!strcasecmp($action, 'AEC_LIVE_UPLOADER_DISCONNECT')){
-	//TODO
-	
-	logf("上传者断开连接（离开）");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_UPLOADER_UPLOADING')){
-	//TODO
-	
-	logf("上传者正在上传");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_CLOSE_CHANNEL')){
-	//TODO
-	
-	logf("关闭直播流");
-	echo_1('success');	
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_DELETE_CHANNEL')){
-	//TODO
-	
-	logf("删除直播流");
-	echo_1('success');	
-}
-
-
-if(!strcasecmp($action, 'AEC_LIVE_USER_ONLINE')){
-	//TODO
-	
-	logf("用户开始观看直播");
-	echo_1('success');
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_USER_PLAYING')){
-	//TODO
-	
-	logf("用户观看直播中");
-	echo_1('success');
-}
-
-if(!strcasecmp($action, 'AEC_LIVE_USER_OFFLINE')){
-	//TODO
-	
-	logf("用户停止观看直播");
-	echo_1('success');
-}
-
-//===============================其它事件通知==============
-// https://docs.starrtc.com/zh-cn/docs/aec-other.html
-if(!strcasecmp($action, 'AEC_MSG_SERVER_GET_PUSH_MODE')){
-	//TODO
-	
-	logf("获取某用户的推送模式");
-	echo_1(1);
-}
-
-if(!strcasecmp($action, 'AEC_MSG_SERVER_SET_PUSH_MODE')){
-	//TODO
-	
-	logf("设置某用户的推送模式");
-	echo_1('success');
-}
+process_live_event($action, $dataArr);
+process_other_event($action, $dataArr);
 echo_0('unkown action:'.$action);
+
+
+
+
+
 
 
 
@@ -386,5 +151,516 @@ function process_chatroom_event($action, $dataArr){
 		//data字段需要返回房间创建者和房间的人数上限，用逗号分隔。
 		$data = $roomInfo['userId'].','.$roomInfo['conCurrentNumber']; 		
 		echo_1($data);			
+	}
+}
+
+
+//===================群事件通知===============
+// https://docs.starrtc.com/zh-cn/docs/aec-group.html
+function process_group_event($action, $dataArr){
+	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
+	
+	if(!strcasecmp($action, 'AEC_GROUP_CREATE')){
+		//TODO: 比如检查用户是否有权限创建群
+		
+		logf("$userId 想创建群");
+		// {"ts":"1561096441","action":"AEC_GROUP_CREATE","userId":"892500","addUsers":"892500","userDefineData":"888"}
+		
+		//addUsers :用逗号分开的群成员列表，里面已经包含了创建者。
+		$addUsers       = array_key_exists('addUsers',   $dataArr) ? $dataArr['addUsers'] : '';
+		$userDefineData = array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '';
+		$groupName      = $userDefineData;		//目前只传了群名，后面可以传自定义json	
+		
+		$ret = createGroup($userId, $groupName, $addUsers);
+		if($ret['ret'] != 0){	
+			echo_0('createGroup failed:'.$ret['ret']); 		
+		}		
+		$groupId = $ret['data']['groupId'];		
+		echo_1($groupId);	
+	}
+	
+	if(!strcasecmp($action, 'AEC_GROUP_SYNC_ALL')){
+		//TODO
+		
+		logf("服务端重启了，请求同步全部群成员");
+		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;		
+		$ret = getGroupList($groupId);
+		if($ret['ret'] != 0){
+			echo_0('get GroupList err'.$ret['ret']);	
+		}
+
+		$data = array();
+		if(!empty($ret['data']['groupList'])){// groupList表示这个群的所有群成员，用逗号分开。
+			$data['groupList']  = $ret['data']['groupList'];
+		}
+		if(!empty($ret['data']['ignoreList'])){//ignoreList为可选参数，表示对该群开启了消息免打扰的所有群成员，用逗号分开。
+			$data['ignoreList'] = $ret['data']['ignoreList'];
+		}	
+		echo_1($data);			
+	}
+	
+	if(!strcasecmp($action, 'AEC_GROUP_DEL')){
+		//TODO 表示用户想要删除群，可在此判断用户是否有删除权限，比如是否为创建者。如果有权限，可删除您服务器里面的群相关数据。
+		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;	
+		logf("$userId 想要删除群 $groupId");
+		
+		$ret = deleteGroup($userId, $groupId);	
+		if($ret != 0){	
+			echo_0('deleteGroup_failed:'.$ret); 		
+		}		
+		echo_1('deleteGroup_success');		
+	}
+	
+	
+	if(!strcasecmp($action, 'AEC_GROUP_ADD_USER')){		
+		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;	
+		//用户希望添加到该群的成员列表，用逗号分隔，如果添加单个用户，则没有逗号。
+		$addUsers   = array_key_exists('addUsers',   $dataArr) ? $dataArr['addUsers'] : '';	
+		
+		logf("$userId 请求向群 $groupId 新增群成员: $addUsers");
+		
+		//TODO：可以判断userId是不是群里面的成员，如果不是群里面的成员，可以不让其邀请别人进群
+		//或者判断userId是不是群的创建者，从而实现只允许创建者邀请别人进群
+		$addUsersArr = explode(",", $addUsers);
+		foreach($addUsersArr as $userId){
+			$ret = joinGroup($groupId, $userId);
+			if($ret != 0){	
+				echo_0('join group failed:'.$ret); 		
+			}	
+		}
+		echo_1('joinGroup_success');		
+	}	
+
+	if(!strcasecmp($action, 'AEC_GROUP_ADD_USER_AND_SYNC_ALL')){
+		//TODO
+		logf("请求新增群成员并同步全部群成员");
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		//用户希望添加到该群的成员列表，用逗号分隔，如果添加单个用户，则没有逗号。
+		$addUsers   = array_key_exists('addUsers', $dataArr) ? $dataArr['addUsers'] : '';			
+		
+		//TODO：可以判断userId是不是群里面的成员，如果不是群里面的成员，可以不让其邀请别人进群
+		//或者判断userId是不是群的创建者，从而实现只允许创建者邀请别人进群
+		
+		$addUsersArr = explode(",", $addUsers);
+		foreach($addUsersArr as $userId){
+			$ret = joinGroup($groupId, $userId);
+			if($ret != 0){	
+				echo_0('join group failed:'.$ret); 		
+			}	
+		}
+		
+		
+		$ret = getGroupList($groupId);
+		if($ret['ret'] != 0){
+			echo_0('get GroupList err'.$ret['ret']);	
+		}
+
+		$data = array();
+		if(!empty($ret['data']['groupList'])){// groupList表示这个群的所有群成员，用逗号分开。
+			$data['groupList']  = $ret['data']['groupList'];
+		}
+		if(!empty($ret['data']['ignoreList'])){//ignoreList为可选参数，表示对该群开启了消息免打扰的所有群成员，用逗号分开。
+			$data['ignoreList'] = $ret['data']['ignoreList'];
+		}	
+		echo_1($data);			
+	}
+	
+	if(!strcasecmp($action, 'AEC_GROUP_REMOVE_USER')){
+		//TODO				
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		//希望从群内删除的成员列表，用逗号分隔，如果删除单个用户，则没有逗号。
+		$removeUsers   = array_key_exists('removeUsers',   $dataArr) ? $dataArr['removeUsers'] : '';
+		logf("$userId 请求删除群 $groupId 中的成员: $removeUsers");	
+		
+		$removeUsersArr = explode(",", $removeUsers);
+		//TODO 可检查userId是不是群主,如果不是可以不让其踢人，同时可以不让群主踢自已
+		
+		foreach($removeUsersArr as $userId){
+			$ret = quitGroup($userId, $groupId);
+			if($ret != 0){	
+				echo_0('quitGroup_failed:'.$ret); 		
+			}			
+		}
+		echo_1('quitGroup_success');	
+	}
+	
+	
+	if(!strcasecmp($action, 'AEC_GROUP_REMOVE_USER_AND_SYNC_ALL')){
+		//TODO
+		logf("请求删除群成员并同步全部群成员");
+		
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		//希望从群内删除的成员列表，用逗号分隔，如果删除单个用户，则没有逗号。
+		$removeUsers   = array_key_exists('removeUsers',   $dataArr) ? $dataArr['removeUsers'] : '';
+		logf("$userId 请求删除群 $groupId 中的成员: $removeUsers");	
+		
+		$removeUsersArr = explode(",", $removeUsers);
+		//TODO 可检查userId是不是群主,如果不是可以不让其踢人，同时可以不让群主踢自已
+		
+		foreach($removeUsersArr as $userId){
+			$ret = quitGroup($userId, $groupId);
+			if($ret != 0){	
+				echo_0('quitGroup_failed:'.$ret); 		
+			}			
+		}
+		
+		//同步群成员
+		$ret = getGroupList($groupId);
+		if($ret['ret'] != 0){
+			echo_0('get GroupList err'.$ret['ret']);	
+		}
+
+		$data = array();
+		if(!empty($ret['data']['groupList'])){// groupList表示这个群的所有群成员，用逗号分开。
+			$data['groupList']  = $ret['data']['groupList'];
+		}
+		if(!empty($ret['data']['ignoreList'])){//ignoreList为可选参数，表示对该群开启了消息免打扰的所有群成员，用逗号分开。
+			$data['ignoreList'] = $ret['data']['ignoreList'];
+		}	
+		echo_1($data);		
+		
+	}
+	
+	if(!strcasecmp($action, 'AEC_SET_GROUP_PUSH_IGNORE')){
+		//TODO
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		logf("$userId 想对群 $groupId 设置免打扰");
+		$ret = pushIgnore($groupId, $userId, GROUP_DND);
+		if($ret != 0){
+			echo_0('pushIgnore failed:'.$ret);
+		}
+		
+		echo_1('pushIgnore_success');		
+	}
+	
+	
+	
+	if(!strcasecmp($action, 'AEC_SET_GROUP_PUSH_IGNORE_AND_SYNC_ALL')){
+		//TODO
+		logf("请求设置免打扰模式并同步群成员");
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		$ret = pushIgnore($groupId, $userId, GROUP_DND);
+		if($ret != 0){
+			echo_0('pushIgnore failed:'.$ret);
+		}
+		//同步群成员
+		$ret = getGroupList($groupId);
+		if($ret['ret'] != 0){
+			echo_0('get GroupList err'.$ret['ret']);	
+		}
+
+		$data = array();
+		if(!empty($ret['data']['groupList'])){// groupList表示这个群的所有群成员，用逗号分开。
+			$data['groupList']  = $ret['data']['groupList'];
+		}
+		if(!empty($ret['data']['ignoreList'])){//ignoreList为可选参数，表示对该群开启了消息免打扰的所有群成员，用逗号分开。
+			$data['ignoreList'] = $ret['data']['ignoreList'];
+		}	
+		echo_1($data);				
+	}
+	
+	if(!strcasecmp($action, 'AEC_UNSET_GROUP_PUSH_IGNORE')){
+		//TODO		
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		logf("$userId 想对群 $groupId 取消免打扰");
+		
+		$ret = pushIgnore($groupId, $userId, GROUP_PUSH);
+		if($ret != 0){
+			echo_0('pushIgnore failed:'.$ret);
+		}		
+		echo_1('pushIgnore_success');		
+	}
+	
+	if(!strcasecmp($action, 'AEC_UNSET_GROUP_PUSH_IGNORE_AND_SYNC_ALL')){
+		//TODO
+		logf("请求取消免打扰并同步群成员");
+		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
+		$ret = pushIgnore($groupId, $userId, GROUP_PUSH);
+		if($ret != 0){
+			echo_0('pushIgnore failed:'.$ret);
+		}		
+		
+		//同步群成员
+		$ret = getGroupList($groupId);
+		if($ret['ret'] != 0){
+			echo_0('get GroupList err'.$ret['ret']);	
+		}
+
+		$data = array();
+		if(!empty($ret['data']['groupList'])){// groupList表示这个群的所有群成员，用逗号分开。
+			$data['groupList']  = $ret['data']['groupList'];
+		}
+		if(!empty($ret['data']['ignoreList'])){//ignoreList为可选参数，表示对该群开启了消息免打扰的所有群成员，用逗号分开。
+			$data['ignoreList'] = $ret['data']['ignoreList'];
+		}	
+		echo_1($data);			
+			
+	}	
+}
+
+
+//==============================直播事件通知========================
+//https://docs.starrtc.com/zh-cn/docs/aec-live.html
+function process_live_event($action, $dataArr){	
+	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GLOBAL_PUBLIC')){
+		//TODO
+		
+		//请求创建公开的直播间，上传者和连麦者需要登录，观众不需要登录或其他权限即可观看直播。		
+		logf("$userId 请求创建GLOBAL_PUBLIC直播流");	
+		//此直播间对应的聊天室ID，如果直播间无聊天功能，则没有roomId参数。
+		$roomId           = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
+		//直播间ID号
+		$channelId        = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
+		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
+		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
+		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
+		$roomLiveType  = intval(array_key_exists('roomLiveType', $dataArr) ? $dataArr['roomLiveType'] : 0);//可选
+	
+		
+		//TODO 可对该直播流的并发数进行控制，如500
+		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		// 0是不限制
+			echo_0('conCurrentNumber_out_of_limit'); 
+		}
+				
+		
+		if($roomLiveType == liveType_meeting){	
+			$liveType = liveType_meeting;			
+		}elseif($roomLiveType == liveType_live){
+			$liveType = liveType_live;			
+		}else{
+			echo_0('invalid roomLiveType:'.$roomLiveType);
+		}	
+			
+		
+		$ret = create_channel($userId, $channelId, channelType_GLOBAL_PUBLIC, $liveType, $roomId, ownerType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		if($ret != 0){		
+			echo_0('create channel failed:'.$ret);
+		}
+		$ret = update_chatroom_liveType($roomId, $liveType);
+		if($ret != 0){		
+			echo_0('update_chatroom_liveType_failed:'.$ret);
+		}
+		
+		echo_1('GLOBAL_PUBLIC_create_success');	
+	}
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_LOGIN_PUBLIC')){
+		//TODO
+		logf("$userId 请求创建LOGIN_PUBLIC直播流");
+		//此直播间对应的聊天室ID，如果直播间无聊天功能，则没有roomId参数。
+		$roomId           = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
+		//直播间ID号
+		$channelId        = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
+		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
+		$roomLiveType  = intval(array_key_exists('roomLiveType', $dataArr) ? $dataArr['roomLiveType'] : 0);//可选
+		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
+		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
+		
+		if(empty($channelId) || empty($conCurrentNumber)){
+			echo_0('invalid args'); 
+		}	
+		//TODO 可对该直播流的并发数进行控制，如500
+		if($conCurrentNumber > 500 || $conCurrentNumber <= 0){		
+			echo_0('conCurrentNumber_out_of_limit'); 
+		}
+		if($roomLiveType == liveType_meeting){	
+			$liveType = liveType_meeting;			
+		}elseif($roomLiveType == liveType_live){
+			$liveType = liveType_live;			
+		}else{
+			echo_0('invalid roomLiveType:'.$roomLiveType);
+		}	
+		
+		$ret = create_channel($userId, $channelId, channelType_LOGIN_PUBLIC, $liveType, $roomId, ownerType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		if($ret != 0){		
+			echo_0('create channel:'.$ret);
+		}
+		$ret = update_chatroom_liveType($roomId, $liveType);
+		if($ret != 0){		
+			echo_0('update_chatroom_liveType_failed:'.$ret);
+		}	
+		
+		echo_1('LOGIN_PUBLIC_create_success');	
+	}
+	
+	
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_PUBLIC')){		
+		//TODO 可以检查用户权限，如只让群创建者发起直播
+		//创建仅在群内才能观看的直播间，上传者、连麦者和观众都需要在这个群内才可参与或观看直播。
+		$groupId           = array_key_exists('groupId', $dataArr) ? $dataArr['groupId'] : '';
+		logf("$userId 请求在群 $groupId 内创建GROUP_PUBLIC直播流");
+		echo_0('no_rights');	
+	}
+	
+	
+	if(!strcasecmp($action, 'AEC_LIVE_APPLY_UPLOAD_CHANNEL')){
+		//TODO
+		
+		logf("$userId 申请上传");
+		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);    
+		if(empty($channelId)){
+			echo_0('channelId is empty');
+		}	
+		
+		
+		$ret = get_channel_info($channelId);
+		if($ret['ret'] != 0){
+			if($ret['ret'] == 14){
+				echo_0('channel not exist');
+			}
+			echo_0('get_channel_info_failed:'.$ret['ret']);
+		}
+		$channelInfo                = $ret['data'];	
+		
+		$liveType                   = $channelInfo['liveType'];
+		//TODO  检查是否有权限，比如创建者才能上传
+		if($liveType == liveType_live){
+			$creator                = $channelInfo['userId'];	
+			if(strcasecmp($creator, $userId)){
+				echo_0('you are not the live creator');
+			}		
+		}
+		$data = array();	
+		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
+		echo_1($data);		
+	}
+	
+	
+	if(!strcasecmp($action, 'AEC_LIVE_SET_CHANNEL_UPLOADER')){
+		//TODO 检查权限，返回1表示通过
+		
+		logf("设置 $userId 为上传者");
+		echo_1('SET_CHANNEL_UPLOADER_success');	
+	}
+	if(!strcasecmp($action, 'AEC_LIVE_UNSET_CHANNEL_UPLOADER')){
+		//TODO
+		logf("取消 $userId 的上传权限");		
+		echo_1('UNSET_CHANNEL_UPLOADER_success');	
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_UPLOADER_DISCONNECT')){
+		
+		
+		logf("上传者 $userId 断开连接（离开）直播间");
+		
+		//TODO 检查是不是自己的 channel, 更新直播状态	
+		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);		
+		$ret = get_channel_info($channelId);
+		if($ret['ret'] != 0){
+			if($ret['ret'] == 14){
+				echo_0('channel not exist');
+			}
+			echo_0('get_channel_info_failed:'.$ret['ret']);
+		}
+		$channelInfo        = $ret['data'];
+		$channel_creator    = $channelInfo['userId'];
+		if($channel_creator == $userId){
+			/* $ret = update_live_state($channelId, NO_LIVE);
+			if($ret != 0){
+				echo_0('update_live_state_failed');
+			} */
+		}			
+		echo_1('DISCONNECT_success');	
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_UPLOADER_UPLOADING')){
+		//TODO
+		//上传者正在上传 ,每分钟会回调一次此事件
+		//视频服务没有与业务绑定,需要根据channelId判断该channel是属于群的直播流还是属于其它的直播流
+		//更新直播状态
+		logf("上传者 $userId 仍在上传中");
+		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		/* $ret = update_live_state($channelId, LIVING);
+		if($ret != 0){
+			echo_0('update_live_state_failed');
+		}	 */
+		
+		//TODO 可检查用户，如果余额不足，可通过此事件终止用户继续直播。
+		//echo_0("余额不足");		
+		echo_1('success');	
+	}
+	if(!strcasecmp($action, 'AEC_LIVE_CLOSE_CHANNEL')){
+		//TODO 检查权限
+		
+		logf("$userId 请求关闭直播流");
+		echo_1('success');	
+	}
+	if(!strcasecmp($action, 'AEC_LIVE_DELETE_CHANNEL')){
+		//TODO 检查userId是否为channel的创建者,以决定是否有权限删除
+		
+		logf("$userId 请求删除直播流");
+		
+		//删除channel	
+		$ret = deleteChannel($userId, $channelId);
+		if($ret != 0){					  	
+			echo_0('deleteChannel_failed');				
+		}
+		echo_1('success');	
+	}
+	if(!strcasecmp($action, 'AEC_LIVE_USER_ONLINE')){//用户开始观看直播
+		//TODO 检查用户余额
+		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		logf("用户 $userId 开始观看直播");
+		
+		echo_1('USER_ONLINE_success');
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_USER_PLAYING')){	//用户观看直播中，每分钟调用一次
+		//TODO 可扣费
+		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		logf("用户 $userId 还在观看直播中");
+		echo_1('USER_PLAYING_success');
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_USER_OFFLINE')){	//用户停止观看直播
+		//TODO
+		
+		logf("用户 $userId 停止观看直播");
+		echo_1('USER_OFFLINE_success');
+	}
+	
+	
+	//
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_SPECIFY')){
+		logf("GROUP_SPECIFY");
+		echo_0('no rights'); 		
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_LOGIN_SPECIFY')){	
+		logf("LOGIN_SPECIFY");
+		echo_0('no rights'); 		
+	}	
+	
+	if($action == 'AEC_LIVE_APPLY_DOWNLOAD_CHANNEL'){//申请下载直播流	
+		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		logf("用户 $userId 申请下载直播流");
+		echo_0('no rights'); 	
+	}
+	
+}
+
+
+//===============================其它事件通知==============
+// https://docs.starrtc.com/zh-cn/docs/aec-other.html
+function process_other_event($action, $dataArr){
+	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
+	if(!strcasecmp($action, 'AEC_MSG_SERVER_GET_PUSH_MODE')){//获取某用户的推送模式
+		//TODO
+		
+		logf("获取用户 $userId 的推送模式");
+		$pushmode = MSG_PUSH_MODE_ALL_ON;
+		echo_1($pushmode);
+	}
+
+	if(!strcasecmp($action, 'AEC_MSG_SERVER_SET_PUSH_MODE')){//设置某用户的推送模式
+		//TODO
+		$pushMode = trimInput(array_key_exists('pushMode', $dataArr) ? $dataArr['pushMode'] : '');//传数字
+		logf("设置用户 $userId 的推送模式为 $pushMode");
+		
+		/* $ret = set_user_msg_push_mode($userId, $pushMode);
+		if($ret != 0){
+			echo_0('set_user_msg_push_mode_faild');     
+		} */
+		echo_1('success');
 	}
 }

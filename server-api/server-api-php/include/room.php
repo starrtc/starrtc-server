@@ -89,3 +89,24 @@ function isRoomIdExist($roomId){
     } 	
 	$retArr['ret'] = 10;return $retArr;	
 }
+
+
+
+//更新chatroom类型
+function update_chatroom_liveType($roomId, $liveType){
+	global $g_writeMdb;			
+	try{
+		$sql = "update chatRoom set liveType = ? where roomId = ? limit 1";
+		if(!($pstmt = $g_writeMdb->prepare($sql))){ 
+			return 12;
+		}   
+		if($pstmt->execute(array($liveType, $roomId))){
+			return 0;	
+		}else{
+			return 13;
+		}		
+	}catch(PDOException $e){
+		return 11;
+	}	
+    return 10;
+}
