@@ -497,7 +497,7 @@ function process_live_event($action, $dataArr){
 		//TODO
 		
 		logf("$userId 申请上传");
-		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);    
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;    
 		if(empty($channelId)){
 			echo_0('channelId is empty');
 		}	
@@ -544,7 +544,7 @@ function process_live_event($action, $dataArr){
 		logf("上传者 $userId 断开连接（离开）直播间");
 		
 		//TODO 检查是不是自己的 channel, 更新直播状态	
-		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);		
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;		
 		$ret = get_channel_info($channelId);
 		if($ret['ret'] != 0){
 			if($ret['ret'] == 14){
@@ -569,7 +569,7 @@ function process_live_event($action, $dataArr){
 		//视频服务没有与业务绑定,需要根据channelId判断该channel是属于群的直播流还是属于其它的直播流
 		//更新直播状态
 		logf("上传者 $userId 仍在上传中");
-		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		/* $ret = update_live_state($channelId, LIVING);
 		if($ret != 0){
 			echo_0('update_live_state_failed');
@@ -599,7 +599,7 @@ function process_live_event($action, $dataArr){
 	}
 	if(!strcasecmp($action, 'AEC_LIVE_USER_ONLINE')){//用户开始观看直播
 		//TODO 检查用户余额
-		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		logf("用户 $userId 开始观看直播");
 		
 		echo_1('USER_ONLINE_success');
@@ -607,7 +607,7 @@ function process_live_event($action, $dataArr){
 	
 	if(!strcasecmp($action, 'AEC_LIVE_USER_PLAYING')){	//用户观看直播中，每分钟调用一次
 		//TODO 可扣费
-		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		logf("用户 $userId 还在观看直播中");
 		echo_1('USER_PLAYING_success');
 	}
@@ -632,7 +632,7 @@ function process_live_event($action, $dataArr){
 	}	
 	
 	if($action == 'AEC_LIVE_APPLY_DOWNLOAD_CHANNEL'){//申请下载直播流	
-		$channelId = trimInput(array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0);
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		logf("用户 $userId 申请下载直播流");
 		echo_0('no rights'); 	
 	}
@@ -654,7 +654,7 @@ function process_other_event($action, $dataArr){
 
 	if(!strcasecmp($action, 'AEC_MSG_SERVER_SET_PUSH_MODE')){//设置某用户的推送模式
 		//TODO
-		$pushMode = trimInput(array_key_exists('pushMode', $dataArr) ? $dataArr['pushMode'] : '');//传数字
+		$pushMode = array_key_exists('pushMode', $dataArr) ? $dataArr['pushMode'] : '';//传数字
 		logf("设置用户 $userId 的推送模式为 $pushMode");
 		
 		/* $ret = set_user_msg_push_mode($userId, $pushMode);
