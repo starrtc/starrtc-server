@@ -4,4 +4,3 @@
 
 具体可参考https://docs.starrtc.com/zh-cn/docs/aec-index.html
 
-php版详细逻辑请参考：https://github.com/starrtc/starrtc_demo_server_sdk_php

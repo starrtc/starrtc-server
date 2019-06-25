@@ -148,6 +148,10 @@ http://www.xxx.com:19932/delete?channelId=xxxx
 
 示例代码参见：https://docs.starrtc.com/en/download/
 
+服务端开发
+=====
+打开配置文件starrtc.conf，修改里面的aecurl的值（目前不支持https地址），开发请参考server-api目录里面的示例代码。
+
 Contact
 =====
 QQ ： 2162498688
