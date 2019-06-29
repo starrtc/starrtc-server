@@ -6,7 +6,7 @@ function quitGroup($userId, $groupId){
 	$userList = '';
 	try{		
 		//从群中删除此成员 
-		$sql = "select userList, creator from groups where groupId = ? limit 1";
+		$sql = "select userList, creator from groups where id = ? limit 1";
 		if(!($pstmt = $g_writeMdb->prepare($sql))){
 			return 12; 
 		}
@@ -72,7 +72,7 @@ function quitGroup($userId, $groupId){
 function updateGroup_by_del($groupId, $userList){
 	global $g_writeMdb;
     try{
-        $sql = "update `groups` set `userList` = ?, curNum=curNum-1 where `groupId` = ? limit 1";
+        $sql = "update `groups` set `userList` = ?, curNum=curNum-1 where `id` = ? limit 1";
         if(!($pstmt = $g_writeMdb->prepare($sql))){
             return 12;
         }

@@ -8,7 +8,7 @@ function joinGroup($groupId, $userId){
 	$userList = '';
 	try{		
 		// 取出群成员并检查
-		$sql = "select userList from groups where groupId = ? limit 1";
+		$sql = "select userList from groups where id = ? limit 1";
 		if(!($pstmt = $g_writeMdb->prepare($sql))){
             return 12;
         } 
@@ -87,7 +87,7 @@ function joinGroup($groupId, $userId){
 function updateGroup_by_add($groupId, $userList){
 	global $g_writeMdb;		
     try{
-		$sql = "update `groups` set `userList` = ?, curNum=curNum+1 where `groupId` = ? limit 1"; 
+		$sql = "update `groups` set `userList` = ?, curNum=curNum+1 where `id` = ? limit 1"; 
         if(!($pstmt = $g_writeMdb->prepare($sql))){
             return 12;
         }

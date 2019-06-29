@@ -16,7 +16,7 @@ define('username',     'xxx');
 define('password',     'xxx');
 
 
-// roomType
+// roomType 服务端程序定义的类型
 define('CHAT_ROOM_TYPE_PUBLIC', 1);
 define('CHAT_ROOM_TYPE_LOGIN',  2);
 
@@ -25,8 +25,6 @@ define('GROUP_DND',   	  1);//Do Not Disturb 群消息免打扰,  开启后该�
 
 
 
-define('liveType_meeting',    1);//聊天室表如果liveType字段为0，表示为纯IM聊天室
-define('liveType_live',       2);
 
 
 
@@ -35,10 +33,12 @@ define('channelType_LOGIN_SPECIFY', 2);
 define('channelType_GLOBAL_PUBLIC', 3);
 define('channelType_LOGIN_PUBLIC',  4);
 define('channelType_GROUP_PUBLIC',  5);
+define('channelType_BROADCAST',  6);
+define('channelType_LIVEPROXY_GLOBAL_PUBLIC',  7);
 
 
-define('ownerType_GROUP_CHANNEL', 1);//ownerType,区分是群的直播还是其它的
-define('ownerType_ROOM_CHANNEL',  2);
+define('relateType_GROUP_CHANNEL', 1);//区分是群的直播还是其它的
+define('relateType_ROOM_CHANNEL',  2);
 
 define('NO_LIVE',  0);//直播状态：无直播, 
 define('LIVING', 1);//有直播
@@ -57,6 +57,7 @@ $api_config_dir = dirname(__FILE__);
 define('log_file',  $api_config_dir . '/log.txt');
 
 
+require_once($api_config_dir . '/include/errCode.php');
 require_once($api_config_dir . '/include/pubFun.php');
 require_once($api_config_dir . '/include/dbBase.php');
 

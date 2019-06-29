@@ -5,7 +5,7 @@ function deleteGroup($creator, $groupId){
 	global $g_writeMdb;	
     
     try{
-        $sql = "select userList from groups where groupId = ? and creator = ? limit 1";
+        $sql = "select userList from groups where id = ? and creator = ? limit 1";
         if(!($pstmt = $g_writeMdb->prepare($sql))){
             return 12;
         }
@@ -94,7 +94,7 @@ function delGroupIdFromUserGroup($userId, $groupId){
 function delGroup($groupId){
 	global $g_writeMdb;		
     try{
-        $sql = "delete from `groups` where `groupId` = ? limit 1";
+        $sql = "delete from `groups` where `id` = ? limit 1";
         if(!($pstmt = $g_writeMdb->prepare($sql))){
             return 12;
         }

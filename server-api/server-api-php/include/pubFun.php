@@ -4,15 +4,15 @@
 
 function echo_1($data, $exit = 1){	
 	$retArr = array('status' => '1', 'data' => $data);
-	$json   = json_encode($retArr);	
-	echo $json;	
+	$json   = json_encode($retArr, JSON_UNESCAPED_UNICODE);	
+	echo $json;		
 	if($exit == 1){
 		exit;
 	}	
 }
 
-function echo_0($data, $exit = 1){	
-	logf($data);
+function echo_0($msg, $data = errcode_unkown,  $exit = 1){	
+	logf($msg);
 	$retArr = array('status' => '0', 'data' => $data);
 	$json   = json_encode($retArr);	
 	echo $json;	
@@ -41,6 +41,7 @@ function addSuffix($ids){
 }
 
 
+//获取前缀
 function getPrefix($prefix_suffix){	
 	$index  = strpos($prefix_suffix, "_", 0); 
 	if($index){		

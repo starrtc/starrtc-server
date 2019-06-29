@@ -18,10 +18,11 @@ require_once($aec_dir . '/include/group_join.php');
 require_once($aec_dir . '/include/group_quit.php');
 require_once($aec_dir . '/include/channel.php');
 
-$data = rawurldecode(array_key_exists('data', $_REQUEST) ? $_REQUEST['data'] : 0);//接收服务端程序传过来的数据
+$data = array_key_exists('data', $_REQUEST) ? $_REQUEST['data'] : 0;//接收服务端程序传过来的数据
 if(empty($data)){
-	echo_0('missing args');
+	echo_0('missing args', errcode_missing_args);
 }
+
 $dataArr = json_decode($data, TRUE);
 if(!is_array($dataArr)){
 	echo_0("json is invalid:$data");
@@ -34,16 +35,144 @@ if(empty($action)){
 	echo_0('action is empty');
 }
 
+
+
+
 process_voip_event($action, $dataArr);
 process_chatroom_event($action, $dataArr);
 process_group_event($action, $dataArr);
 process_live_event($action, $dataArr);
+process_list_event($action, $dataArr);
+process_proxy_event($action, $dataArr);
 process_other_event($action, $dataArr);
+
+
 echo_0('unkown action:'.$action);
 
 
+//推拉流 rtmp rtsp
+function process_proxy_event($action, $dataArr){	
+	
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC')){	
+		
+		//{"ts":"1561542285","action":"AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC",
+		//"roomId":"a4aDZfdwsWuTLFkD","listType":"2","channelId":"Wz@NWuVj8Tx5aa4a","conCurrentNumber":"100","extra":"222"}
+		$channelId  	  = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
+		$roomId  	  = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
+		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : 0;
+		$type     = array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0;
+		$specify 	      = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';
+		$extra   		  = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
+		
+		logf("请求创建类型为 $type 的LIVEPROXY_GLOBAL_PUBLIC:$extra");
+		
+		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
+			echo_0('conCurrentNumber_out_of_limit'); 
+		}
+		
+		$ret = get_room_info($roomId);	
+		if($ret['ret'] != 0){			
+			echo_0('get room info err:'.$ret['ret']);
+		}	
+		$userId            = $ret['data']['userId'];		
+	
+		$ret = create_channel($userId, $channelId, channelType_LIVEPROXY_GLOBAL_PUBLIC, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		if($ret != 0){		
+			echo_0('create channel failed:'.$ret);
+		}
+		echo_1('LIVEPROXY_GLOBAL_PUBLIC_create_success');		
+		
+	}
+	
+	//{"action" : "AEC_LIVE_LIVEPROXY_DELETE_CHANNEL","channelId" : "xxx"}
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_DELETE_CHANNEL')){
+		logf("请求删除LIVEPROXY_CHANNEL");
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		$ret = deleteChannel($channelId);
+		if($ret != 0){					  	
+			echo_0('deleteChannel_failed');				
+		}
+		
+		echo_1('LIVEPROXY_CHANNEL_delete_success');				
+	}
+	
+	//{"action" : "AEC_LIVE_LIVEPROXY_CLOSE_CHANNEL","channelId" : "xxx"}
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CLOSE_CHANNEL')){
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		logf("请求关闭LIVEPROXY_CHANNEL");
+		echo_1('LIVEPROXY_CHANNEL_close_success');	
+		
+	}
+	//{"action" : "AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL","channelId" : "xxx"}
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL')){
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		
+			
+		$ret = get_channel_info($channelId);
+		if($ret['ret'] != 0){
+			if($ret['ret'] == 14){
+				echo_0('channel not exist');
+			}
+			echo_0('get_channel_info_failed:'.$ret['ret']);
+		}
+		$channelInfo = $ret['data'];	
+		
+		
+		
+		$data = array();
+		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
+
+		echo_1($data);
+	}
+	
+	
+}
 
 
+
+//处理列表事件
+function process_list_event($action, $dataArr){
+	
+	if(!strcasecmp($action, 'AEC_CHATROOM_QUERY_ALL_CHATROOM_LIST')){
+		//{"ts":"1561359529","action":"AEC_CHATROOM_QUERY_ALL_CHATROOM_LIST","listTypes":"0","userId（可选）":"577175"}
+		// listTypes:
+		
+		//如果userId有值，说明是查询自已的
+		$listTypes           = array_key_exists('listTypes', $dataArr)    ? $dataArr['listTypes']    : -1;
+		logf("请求获取类型为 $listTypes 的聊天室列表数据");
+		
+		
+				
+		
+		$ret = get_chatroom_list($listTypes);
+		if($ret['ret'] != 0){	
+			echo_0("get_chatroom_list:".$ret['ret']);		
+		}	
+		
+		logf(json_encode($ret['data'], JSON_UNESCAPED_UNICODE));	
+		
+		echo_1($ret['data']);		
+	}
+		
+	
+	if(!strcasecmp($action, 'AEC_LIVE_QUERY_ALL_CHANNEL_LIST')){
+		//{"ts":"1561631984","action":"AEC_LIVE_QUERY_ALL_CHANNEL_LIST","listTypes":"1,2"}
+		$listTypes           = array_key_exists('listTypes', $dataArr)    ? $dataArr['listTypes']    : -1;
+		logf("请求获取类型为 $listTypes 的channel列表数据");
+		$ret = get_channel_list($listTypes);
+		if($ret['ret'] != 0){	
+			echo_0("get_chatroom_list:".$ret['ret']);		
+		}	
+			
+		logf(json_encode($ret['data'], JSON_UNESCAPED_UNICODE));	
+			
+	
+		
+		echo_1($ret['data']);	
+	}
+	
+	
+}
 
 
 
@@ -54,7 +183,7 @@ echo_0('unkown action:'.$action);
 function process_voip_event($action, $dataArr){
 	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
 	
-	if(!strcasecmp($action, 'AEC_VOIP_USER_ONLINE')){
+	if(!strcasecmp($action, 'AEC_VOIP_USER_ONLINE')){//申请voip通话
 		//TODO： 可检查用户余额是否足够  
 		
 		// {"ts":"1561083201","action":"AEC_VOIP_USER_ONLINE","userId":"892500","userId2":"500660","time":"1561083201"}
@@ -63,18 +192,19 @@ function process_voip_event($action, $dataArr){
 		echo_1('success');	//返回1表示允许此次通话	
 	}
 
-	if(!strcasecmp($action, 'AEC_VOIP_USER_PLAYING')){
+	if(!strcasecmp($action, 'AEC_VOIP_USER_PLAYING')){//voip通话正在进行中，每1分钟调用一次
 		//用户通话时此事件每分钟回调一次
 		//TODO：可以在此对用户的余额进行判断，如果余额不足，可以返回0断开他们俩的通话
 		
-
+		//还可在此统计通话时长
+		
 		//{"ts":"1561083596","action":"AEC_VOIP_USER_PLAYING","userId":"892500","userId2":"500660","time":"1561083596"}
 		$userId2    = array_key_exists('userId2', $dataArr) ? $dataArr['userId2']    : 0;
 		logf("$userId 与 $userId2 仍在通话中");
 		echo_1('success');		
 	}
 
-	if(!strcasecmp($action, 'AEC_VOIP_USER_HANGUP')){
+	if(!strcasecmp($action, 'AEC_VOIP_USER_HANGUP')){//voip挂断
 		//TODO
 		
 		//{"ts":"1561083203","action":"AEC_VOIP_USER_HANGUP","userId":"892500","userId2":"500660","hangupUserId":"500660","time":"1561083203"}
@@ -91,19 +221,20 @@ function process_voip_event($action, $dataArr){
 function process_chatroom_event($action, $dataArr){
 	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
 	$roomId    = array_key_exists('roomId',         $dataArr) ? $dataArr['roomId'] : '';
-	if(!strcasecmp($action, 'AEC_CHATROOM_CREATE')){
+	if(!strcasecmp($action, 'AEC_CHATROOM_CREATE')){//新建聊天室
 		//TODO
 		
 		//{"ts":"1561085008","action":"AEC_CHATROOM_CREATE",
-		//"userId":"892500","roomId":"a4a8_KS9sWt36ttn","roomType":"CHAT_ROOM_TYPE_PUBLIC",
+		//"userId":"892500","roomId":"a4a8_KS9sWt36ttn","roomType":"CHAT_ROOM_TYPE_PUBLIC","listType":"0",
 		//"conCurrentNumber":"100","userDefineData":"666"}
 		//其中 userDefineData 是客户端创建聊天室时传的参数，目前传的是聊天室的名字，以后可以传json.
 		
 		
-		$roomType         = array_key_exists('roomType',         $dataArr) ? $dataArr['roomType'] : '';
+		$roomType     = array_key_exists('roomType',         $dataArr) ? $dataArr['roomType'] : '';
+		$type       = array_key_exists('listType',         $dataArr) ? $dataArr['listType'] : 0;//业务类型
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';// 最大人数
 		
-		$userDefineData         = array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '';		
+		$userDefineData   = rawurldecode(array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '');		
 		$roomName = $userDefineData;//目前自定义字段里面传的是名称		
 		if(empty($roomName)){
 			echo_0('invalid roomName');
@@ -116,7 +247,7 @@ function process_chatroom_event($action, $dataArr){
 		logf("$userId 请求新建聊天室:$roomName");
 		
 		//TODO 可以检查userId的权限，以确定他是否有权限创建聊天室
-		$ret = create_chat_room($userId, $roomId, $roomName, $roomType, $conCurrentNumber);
+		$ret = create_chat_room($userId, $roomId, $roomName, $roomType, $type, $conCurrentNumber);
 		if($ret != 0){	
 			echo_0("create_chatroom_failed:$ret");		
 		}		
@@ -124,7 +255,7 @@ function process_chatroom_event($action, $dataArr){
 	}
 	
 
-	if(!strcasecmp($action, 'AEC_CHATROOM_DELETE')){
+	if(!strcasecmp($action, 'AEC_CHATROOM_DELETE')){//删除聊天室	
 		//TODO:可检查userId的权限，比如是不是聊天室的创建者
 		
 		$ret = delete_chat_room($userId, $roomId);
@@ -136,7 +267,7 @@ function process_chatroom_event($action, $dataArr){
 	}
 
 
-	if(!strcasecmp($action, 'AEC_CHATROOM_IS_EXIST')){
+	if(!strcasecmp($action, 'AEC_CHATROOM_IS_EXIST')){//查询聊天室是否存在
 		//TODO
 		logf("查询聊天室 $roomId 是否存在");
 		$ret = isRoomIdExist($roomId);
@@ -152,6 +283,18 @@ function process_chatroom_event($action, $dataArr){
 		$data = $roomInfo['userId'].','.$roomInfo['conCurrentNumber']; 		
 		echo_1($data);			
 	}
+	
+	if(!strcasecmp($action, 'AEC_CHATROOM_SEND_MSG')){
+		//TODO 目前未开放此功能
+		//用户每发一条消息都会回调
+		//开放后，可以在此检查用户余额，如果没钱，不让发消息
+		//也可以在此针对每一条消息对用户进行扣费
+		
+		
+	}
+	
+	
+	
 }
 
 
@@ -160,15 +303,19 @@ function process_chatroom_event($action, $dataArr){
 function process_group_event($action, $dataArr){
 	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
 	
-	if(!strcasecmp($action, 'AEC_GROUP_CREATE')){
-		//TODO: 比如检查用户是否有权限创建群
+	if(!strcasecmp($action, 'AEC_GROUP_CREATE')){//创建群
+		//TODO: 比如检查用户是否有权限创建群		
+		/* $ret = canCreateGroup($userId);
+		if($ret != 0){
+			echo_0('can_not_CreateGroup'); 		
+		} */
 		
 		logf("$userId 想创建群");
 		// {"ts":"1561096441","action":"AEC_GROUP_CREATE","userId":"892500","addUsers":"892500","userDefineData":"888"}
 		
 		//addUsers :用逗号分开的群成员列表，里面已经包含了创建者。
 		$addUsers       = array_key_exists('addUsers',   $dataArr) ? $dataArr['addUsers'] : '';
-		$userDefineData = array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '';
+		$userDefineData = rawurldecode(array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '');
 		$groupName      = $userDefineData;		//目前只传了群名，后面可以传自定义json	
 		
 		$ret = createGroup($userId, $groupName, $addUsers);
@@ -179,6 +326,37 @@ function process_group_event($action, $dataArr){
 		echo_1($groupId);	
 	}
 	
+	
+	// 返回自已的群列表：获取某用户所在的所有群的群id
+	if(!strcasecmp($action, 'AEC_GROUP_GET_GROUP_LIST')){
+		//{"ts":"1561705484","action":"AEC_GROUP_GET_GROUP_LIST","userId":"577175"}
+		//返回：{"status":"x","data":{"groupIdList":"1000,1001,1002","groupNameList":"gname1,gname2,gname3","creatorList":"userId1,userId2,userId3"}}
+		logf("$userId 请求获取自已的群列表");
+		$ret = get_my_group_list($userId);
+		if($ret['ret'] != 0){	
+			echo_0('get_my_group_list_failed:'.$ret['ret']);
+		}	
+		
+		echo_1($ret['data']);
+		
+	}
+	
+	// {"ts":"1561706743","action":"AEC_GROUP_GET_USER_LIST","userId":"577175","groupId":"100382"}
+	if(!strcasecmp($action, 'AEC_GROUP_GET_USER_LIST')){
+		//获取某个群的所有成员的userId
+		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;		
+		logf("$userId 请求获取自已的群 $groupId 里面的成员与该群的免打扰状态");		
+		//返回： {"status":"x","data":{"userIdList":"userId1,userId2,userId3","isIgnore":"1"}}
+		
+		//TODO 检查是不是自已的群
+		$ret = get_group_memberlist($userId, $groupId);
+		if($ret['ret'] != 0){	
+			echo_0('get_group_memberlist_failed:'.$ret['ret']);
+		}
+		logf(json_encode($ret['data']));
+		echo_1($ret['data']);
+		
+	}
 	if(!strcasecmp($action, 'AEC_GROUP_SYNC_ALL')){
 		//TODO
 		
@@ -199,7 +377,7 @@ function process_group_event($action, $dataArr){
 		echo_1($data);			
 	}
 	
-	if(!strcasecmp($action, 'AEC_GROUP_DEL')){
+	if(!strcasecmp($action, 'AEC_GROUP_DEL')){//删除群
 		//TODO 表示用户想要删除群，可在此判断用户是否有删除权限，比如是否为创建者。如果有权限，可删除您服务器里面的群相关数据。
 		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;	
 		logf("$userId 想要删除群 $groupId");
@@ -212,7 +390,7 @@ function process_group_event($action, $dataArr){
 	}
 	
 	
-	if(!strcasecmp($action, 'AEC_GROUP_ADD_USER')){		
+	if(!strcasecmp($action, 'AEC_GROUP_ADD_USER')){	//新增群成员	
 		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;	
 		//用户希望添加到该群的成员列表，用逗号分隔，如果添加单个用户，则没有逗号。
 		$addUsers   = array_key_exists('addUsers',   $dataArr) ? $dataArr['addUsers'] : '';	
@@ -265,7 +443,7 @@ function process_group_event($action, $dataArr){
 		echo_1($data);			
 	}
 	
-	if(!strcasecmp($action, 'AEC_GROUP_REMOVE_USER')){
+	if(!strcasecmp($action, 'AEC_GROUP_REMOVE_USER')){//删除群成员
 		//TODO				
 		$groupId    = array_key_exists('groupId',  $dataArr) ? $dataArr['groupId'] : 0;	
 		//希望从群内删除的成员列表，用逗号分隔，如果删除单个用户，则没有逗号。
@@ -407,40 +585,32 @@ function process_live_event($action, $dataArr){
 		//TODO
 		
 		//请求创建公开的直播间，上传者和连麦者需要登录，观众不需要登录或其他权限即可观看直播。		
-		logf("$userId 请求创建GLOBAL_PUBLIC直播流");	
+		
 		//此直播间对应的聊天室ID，如果直播间无聊天功能，则没有roomId参数。
 		$roomId           = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
 		//直播间ID号
 		$channelId        = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
 		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
-		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
-		$roomLiveType  = intval(array_key_exists('roomLiveType', $dataArr) ? $dataArr['roomLiveType'] : 0);//可选
-	
+		$specify          = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
+		$type        = intval(array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0);//可选
+		
+		logf("$userId 请求创建类型为 $type 的GLOBAL_PUBLIC直播流:$extra");	
 		
 		//TODO 可对该直播流的并发数进行控制，如500
 		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		// 0是不限制
 			echo_0('conCurrentNumber_out_of_limit'); 
-		}
-				
+		}				
 		
-		if($roomLiveType == liveType_meeting){	
-			$liveType = liveType_meeting;			
-		}elseif($roomLiveType == liveType_live){
-			$liveType = liveType_live;			
-		}else{
-			echo_0('invalid roomLiveType:'.$roomLiveType);
-		}	
-			
+		$ret = canCreateChannel($userId);
+		if($ret != 0){		
+			echo_0('can_not_CreateChannel');
+		}				
 		
-		$ret = create_channel($userId, $channelId, channelType_GLOBAL_PUBLIC, $liveType, $roomId, ownerType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		$ret = create_channel($userId, $channelId, channelType_GLOBAL_PUBLIC, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
 		if($ret != 0){		
 			echo_0('create channel failed:'.$ret);
-		}
-		$ret = update_chatroom_liveType($roomId, $liveType);
-		if($ret != 0){		
-			echo_0('update_chatroom_liveType_failed:'.$ret);
-		}
+		}	
 		
 		echo_1('GLOBAL_PUBLIC_create_success');	
 	}
@@ -452,44 +622,84 @@ function process_live_event($action, $dataArr){
 		//直播间ID号
 		$channelId        = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
-		$roomLiveType  = intval(array_key_exists('roomLiveType', $dataArr) ? $dataArr['roomLiveType'] : 0);//可选
 		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
 		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
+		$type        = intval(array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0);//可选
 		
-		if(empty($channelId) || empty($conCurrentNumber)){
-			echo_0('invalid args'); 
-		}	
 		//TODO 可对该直播流的并发数进行控制，如500
-		if($conCurrentNumber > 500 || $conCurrentNumber <= 0){		
+		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
 			echo_0('conCurrentNumber_out_of_limit'); 
 		}
-		if($roomLiveType == liveType_meeting){	
-			$liveType = liveType_meeting;			
-		}elseif($roomLiveType == liveType_live){
-			$liveType = liveType_live;			
-		}else{
-			echo_0('invalid roomLiveType:'.$roomLiveType);
-		}	
 		
-		$ret = create_channel($userId, $channelId, channelType_LOGIN_PUBLIC, $liveType, $roomId, ownerType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		$ret = canCreateChannel($userId);
+		if($ret != 0){		
+			echo_0('can_not_CreateChannel');
+		}	
+			
+		
+		$ret = create_channel($userId, $channelId, channelType_LOGIN_PUBLIC, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
 		if($ret != 0){		
 			echo_0('create channel:'.$ret);
 		}
-		$ret = update_chatroom_liveType($roomId, $liveType);
-		if($ret != 0){		
-			echo_0('update_chatroom_liveType_failed:'.$ret);
-		}	
+	
 		
 		echo_1('LOGIN_PUBLIC_create_success');	
 	}
 	
 	
-	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_PUBLIC')){		
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_PUBLIC')){	
 		//TODO 可以检查用户权限，如只让群创建者发起直播
 		//创建仅在群内才能观看的直播间，上传者、连麦者和观众都需要在这个群内才可参与或观看直播。
 		$groupId           = array_key_exists('groupId', $dataArr) ? $dataArr['groupId'] : '';
 		logf("$userId 请求在群 $groupId 内创建GROUP_PUBLIC直播流");
 		echo_0('no_rights');	
+	}
+	
+	//
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_SPECIFY')){		
+		$groupId           = array_key_exists('groupId', $dataArr) ? $dataArr['groupId'] : '';
+		logf("$userId 请求在群 $groupId 内创建GROUP_SPECIFY直播流");
+		echo_0('no rights'); 		
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_LOGIN_SPECIFY')){	
+		logf("LOGIN_SPECIFY");
+		echo_0('no rights'); 		
+	}
+	
+	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_BROADCAST')){	
+		
+		//{"ts":"1561699571","action":"AEC_LIVE_CREATE_CHANNEL_BROADCAST",
+		//"userId":"577175","roomId":"a4aDXK2lEWucjFTB","listType":"9","channelId":"Wz@NWuVjBI3taaCB","conCurrentNumber":"0","extra":"888"}
+		
+		$roomId           = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
+		//直播间ID号
+		$channelId        = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
+		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
+		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
+		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
+		$type        = intval(array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0);//可选
+		
+		logf("$userId 请求创建类型为 $type 的CHANNEL_BROADCAST广播");
+		
+		//TODO 可对该直播流的并发数进行控制，如500
+		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
+			echo_0('conCurrentNumber_out_of_limit'); 
+		}
+		
+		$ret = canCreateChannel($userId);
+		if($ret != 0){		
+			echo_0('can_not_CreateChannel');
+		}	
+			
+		
+		$ret = create_channel($userId, $channelId, channelType_BROADCAST, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		if($ret != 0){		
+			echo_0('create channel:'.$ret);
+		}
+			
+		echo_1('BROADCAST_create_success');			
+		
 	}
 	
 	
@@ -512,14 +722,14 @@ function process_live_event($action, $dataArr){
 		}
 		$channelInfo                = $ret['data'];	
 		
-		$liveType                   = $channelInfo['liveType'];
-		//TODO  检查是否有权限，比如创建者才能上传
-		if($liveType == liveType_live){
-			$creator                = $channelInfo['userId'];	
-			if(strcasecmp($creator, $userId)){
-				echo_0('you are not the live creator');
-			}		
-		}
+				
+		//TODO  检查是否有权限，比如创建者才能上传		
+		/* $creator                = $channelInfo['userId'];	
+		if(strcasecmp($creator, $userId)){
+			echo_0('you are not the live creator');
+		}		 */
+	
+		
 		$data = array();	
 		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
 		echo_1($data);		
@@ -530,6 +740,7 @@ function process_live_event($action, $dataArr){
 		//TODO 检查权限，返回1表示通过
 		
 		logf("设置 $userId 为上传者");
+		
 		echo_1('SET_CHANNEL_UPLOADER_success');	
 	}
 	if(!strcasecmp($action, 'AEC_LIVE_UNSET_CHANNEL_UPLOADER')){
@@ -553,12 +764,13 @@ function process_live_event($action, $dataArr){
 			echo_0('get_channel_info_failed:'.$ret['ret']);
 		}
 		$channelInfo        = $ret['data'];
+		
 		$channel_creator    = $channelInfo['userId'];
 		if($channel_creator == $userId){
-			/* $ret = update_live_state($channelId, NO_LIVE);
+			$ret = update_channel_state($channelId, NO_LIVE);
 			if($ret != 0){
-				echo_0('update_live_state_failed');
-			} */
+				echo_0('update_channel_state:'.$ret);
+			}
 		}			
 		echo_1('DISCONNECT_success');	
 	}
@@ -568,12 +780,15 @@ function process_live_event($action, $dataArr){
 		//上传者正在上传 ,每分钟会回调一次此事件
 		//视频服务没有与业务绑定,需要根据channelId判断该channel是属于群的直播流还是属于其它的直播流
 		//更新直播状态
-		logf("上传者 $userId 仍在上传中");
+		logf("上传者 $userId 上传中");
 		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
-		/* $ret = update_live_state($channelId, LIVING);
+		
+		$ret = update_channel_state($channelId, LIVING);
 		if($ret != 0){
-			echo_0('update_live_state_failed');
-		}	 */
+			echo_0('update_channel_state:'.$ret);
+		}	
+		
+		
 		
 		//TODO 可检查用户，如果余额不足，可通过此事件终止用户继续直播。
 		//echo_0("余额不足");		
@@ -591,22 +806,25 @@ function process_live_event($action, $dataArr){
 		logf("$userId 请求删除直播流");
 		
 		//删除channel	
-		$ret = deleteChannel($userId, $channelId);
+		$ret = deleteChannelByUserId($userId, $channelId);
 		if($ret != 0){					  	
 			echo_0('deleteChannel_failed');				
 		}
 		echo_1('success');	
 	}
+	
 	if(!strcasecmp($action, 'AEC_LIVE_USER_ONLINE')){//用户开始观看直播
 		//TODO 检查用户余额
 		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		
+		//TODO channelId有可能是群直播 或 非群直播
 		logf("用户 $userId 开始观看直播");
 		
 		echo_1('USER_ONLINE_success');
 	}
 	
 	if(!strcasecmp($action, 'AEC_LIVE_USER_PLAYING')){	//用户观看直播中，每分钟调用一次
-		//TODO 可扣费
+		//TODO 可检查用户余额并扣费
 		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		logf("用户 $userId 还在观看直播中");
 		echo_1('USER_PLAYING_success');
@@ -620,21 +838,12 @@ function process_live_event($action, $dataArr){
 	}
 	
 	
-	//
-	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GROUP_SPECIFY')){
-		logf("GROUP_SPECIFY");
-		echo_0('no rights'); 		
-	}
-	
-	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_LOGIN_SPECIFY')){	
-		logf("LOGIN_SPECIFY");
-		echo_0('no rights'); 		
-	}	
+		
 	
 	if($action == 'AEC_LIVE_APPLY_DOWNLOAD_CHANNEL'){//申请下载直播流	
 		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		logf("用户 $userId 申请下载直播流");
-		echo_0('no rights'); 	
+		echo_1('success'); 	
 	}
 	
 }
@@ -647,7 +856,7 @@ function process_other_event($action, $dataArr){
 	if(!strcasecmp($action, 'AEC_MSG_SERVER_GET_PUSH_MODE')){//获取某用户的推送模式
 		//TODO
 		
-		logf("获取用户 $userId 的推送模式");
+		//logf("获取用户 $userId 的推送模式");
 		$pushmode = MSG_PUSH_MODE_ALL_ON;
 		echo_1($pushmode);
 	}
@@ -663,4 +872,16 @@ function process_other_event($action, $dataArr){
 		} */
 		echo_1('success');
 	}
+	
+	if(!strcasecmp($action, 'AEC_GROUP_PUSH_SYSTEM_MSG')){//推送系统消息到指定用户
+		//{"action" : "AEC_GROUP_PUSH_SYSTEM_MSG","userId" : "xxx"}
+		echo_0('no rights'); 	
+	}
+	
+	if(!strcasecmp($action, 'AEC_GROUP_PUSH_SYSTEM_GROUP_MSG')){//推送群系统消息到指定群
+		//{"action" : "AEC_GROUP_PUSH_SYSTEM_GROUP_MSG","groupId":"xxx","userId" : "xxx"}
+		echo_0('no rights'); 	
+	}
+
+	
 }

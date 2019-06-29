@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #author admin@elesos.com
+#请参考：https://docs.starrtc.com/en/docs/aec-index.html
 
 from flask import Flask
 from flask import request
@@ -23,28 +24,24 @@ logger.addHandler(fh)
 
 app = Flask(__name__)
 
-guardToken='your guardToken'
+
 
 @app.route('/eventCenter', methods=['GET', 'POST'])
 def eventCenter():
-    data=request.values.get('data','')
-    sign=request.values.get('sign','')
-    if data.strip()=="" or sign.strip()=="":
+    data=request.values.get('data','')    
+    if data.strip()=="":
         return echo_0('invalid args')
     #logger.debug(data)
-    m = hmac.new(guardToken, data, hashlib.sha1)
-    signature = base64.b64encode(m.digest())
-    #logger.debug(signature)
-    if sign != signature:
-        return echo_0('invalid sign')
+
     jsonstr= json.loads(data)
     #logger.debug(jsonstr['action'])
-    if 'AEC_ACCESS_VALIDATION' == jsonstr['action']:
-        return echo_1(jsonstr['echostr'])
+   
     if 'AEC_GROUP_CREATE' == jsonstr['action']:
         groupId = 10010
         return echo_1(groupId)
-    #TODO process other action 
+    
+	
+	#TODO process other action 
 
 
 
