@@ -72,6 +72,10 @@ liveSrc服务端部署
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
 
+RTMP推流测试:可打开安卓客户端，新建一个会议室，点击RTMP推流，填上RTMP URL后，点击推流即可。然后用其它第3方播放器如VLC就可以打开该RTMP URL观看会议画面了。
+
+同理，可以在直播间推流，用vlc打开就可以观看直播了。
+
 liveVdn服务端部署
 ==
 互动直播，观众不限人数
@@ -94,32 +98,38 @@ nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 nohup ./videoRecServer > videoRecServer.log 2>&1 &
 ```
 
-rtsp拉流服务端部署
+拉流服务端部署
 ==
-用于拉取第三方rtsp流，并转换为starRTC协议转推至liveSrcServer，然后就可以在各终端的在线会议或互动直播中播放这个流了。
+用于拉取第三方rtsp流(RTMP流暂未开放)，转换为starRTC协议后转发到liveSrcServer，
+然后就可以在各终端的在线会议或互动直播中播放这个流了。
 
 ```java  
 后台启动：
 nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
 ```
 
-使用方法：
+测试方法：首先找到一个可以正常播放的rtsp流（也可以使用示例程序里面的默认测试流），
+然后可以打开安卓示例程序，打开设置-》第3方流测试-》新建一个流，填一下名字，和流的rstp地址（也可以不填直接使用默认的测试流），
+同时选择该流是在直播中播放，还是在会议中播放。 然后去直播间或会议室就可以看到拉的视频流画面了。
 
-在demo中可以在设置界面测试该功能，也可以自己使用HTTP方式调用：
 
-创建channelId并推流（streamType暂时只支持rtsp），接口返回channelId：
+也可以自己使用HTTP方式调用：
 
-http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&roomLiveType=0&roomId=xxxx&extra=xxxxx (roomId和extra为可选参数)
+- 1 创建channelId并拉流（streamType暂时只支持rtsp），接口返回channelId：
 
-推流到指定的channelId：
+http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&roomLiveType=0&roomId=xxxx&extra=xxxxx 
+
+其中roomId和extra为可选参数
+
+- 2 拉流到指定的channelId：
 
 http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&channelId=xxxx
 
-关闭指定的推流（停止拉流，channelId在列表存在）：
+- 3 停止拉流（不删除channelId，仍在列表中存在）：
 
 http://www.xxx.com:19932/close?channelId=xxxx
 
-删除channelId（停止拉流，同时删除channelId）：
+- 4 停止拉流，同时删除channelId：
 
 http://www.xxx.com:19932/delete?channelId=xxxx
 
