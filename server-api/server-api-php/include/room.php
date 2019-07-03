@@ -1,17 +1,17 @@
 <?php
 
 
-function create_chat_room($userId, $roomId, $roomName, $roomType, $type, $conCurrentNumber){
+function create_chat_room($userId, $roomId, $roomName, $roomType, $conCurrentNumber){
 	global $g_writeMdb;		
 	$ctime = date('Y-m-d H:i:s'); 	
 	
 	try{	
-		$sql = "insert into chatRoom (userId, roomId, roomName, roomType, type, conCurrentNumber, ctime, lastOnlineTime) values (?,?,?,?,?,?,?,?)";
+		$sql = "insert into chatRoom (userId, roomId, roomName, roomType, conCurrentNumber, ctime, lastOnlineTime) values (?,?,?,?,?,?,?)";
 		if(!($pstmt = $g_writeMdb->prepare($sql))){           
 			return 13;    
 		} 
 		
-		if($pstmt->execute(array($userId, $roomId, $roomName, $roomType, $type, $conCurrentNumber, $ctime, time()))){		
+		if($pstmt->execute(array($userId, $roomId, $roomName, $roomType, $conCurrentNumber, $ctime, time()))){		
 			return 0;
 		}else{			
 			return 14;
@@ -112,63 +112,6 @@ function update_chatroom_type($roomId, $type){
 }
 
 
-
-function get_chatroom_list($listTypes){
-	global $g_writeMdb;			
-	$retArr = array();	
-	try{			
-		$sql = sprintf("select roomId, userId, roomName from chatRoom where type in (%s) order by id desc", $listTypes);	
-		if(!($pstmt = $g_writeMdb->prepare($sql))){
-            $retArr['ret'] = 12;return $retArr;    
-        } 
-		if($pstmt->execute()){
-			$result = $pstmt->fetchAll();        
-			$resNum = count($result);	
-			
-			
-			$index  = 0;
-			
-			$roomIdArr  = array();
-			$creatorArr = array();
-			$nameArr = array();
-			
-			for($i = 0; $i < $resNum; $i++){			
-				$roomId   = $result[$i][0];				
-				$userId   = $result[$i][1];				
-				$roomName = $result[$i][2];					
-				
-				
-				$roomIdArr[$index]  = $roomId;
-				$creatorArr[$index] = $userId;
-				$nameArr[$index] =   $roomName;			
-				$index++;
-			}		
-			
-			$data = array();
-			
-			if(!empty($roomIdArr)){
-				$data['roomIdList'] 		= implode(',', $roomIdArr);
-			}			
-			if(!empty($creatorArr)){
-				$data['creatorList'] 		= implode(',', $creatorArr);
-			}
-			if(!empty($nameArr)){
-				$data['userDefineDataList'] = implode(',', $nameArr);
-			}
-			
-				
-						
-			$retArr['ret']  = 0;
-			$retArr['data'] = $data;					 
-			return $retArr;					
-		}else{			
-			$retArr['ret'] = 13;return $retArr;	
-		}    
-	}catch(PDOException $e){	
-		$retArr['ret'] = 11;return $retArr;	
-	}
-	$retArr['ret'] = 10;return $retArr;	
-}
 
 
 

@@ -7,33 +7,32 @@ ini_set("display_errors","On");//调试
 error_reporting(E_ALL);
 
 
-//数据库配置
-define('writeServer',  'localhost');
-define('readServer',   'localhost');
 
+define('writeServer',  'localhost');//数据库配置
+define('readServer',   'localhost');
 define('database',     'starRTC_private');
 define('username',     'xxx');
 define('password',     'xxx');
 
 
-// roomType 服务端程序定义的类型
-define('CHAT_ROOM_TYPE_PUBLIC', 1);
-define('CHAT_ROOM_TYPE_LOGIN',  2);
+
+
 
 define('GROUP_PUSH',   	  0); 
 define('GROUP_DND',   	  1);//Do Not Disturb 群消息免打扰,  开启后该群的消息将不会推送给此用户
 
 
 
+define('CHAT_ROOM_TYPE_PUBLIC', 1);// roomType 服务端程序定义的chatroom类型
+define('CHAT_ROOM_TYPE_LOGIN',  2);
 
 
-
-define('channelType_GROUP_SPECIFY', 1);
-define('channelType_LOGIN_SPECIFY', 2);
-define('channelType_GLOBAL_PUBLIC', 3);
-define('channelType_LOGIN_PUBLIC',  4);
-define('channelType_GROUP_PUBLIC',  5);
-define('channelType_BROADCAST',  6);
+define('channelType_GROUP_SPECIFY', 		   1);//服务端程序创建的channel类型
+define('channelType_LOGIN_SPECIFY', 		   2);
+define('channelType_GLOBAL_PUBLIC', 	       3);
+define('channelType_LOGIN_PUBLIC',  		   4);
+define('channelType_GROUP_PUBLIC', 			   5);
+define('channelType_BROADCAST',  			   6);
 define('channelType_LIVEPROXY_GLOBAL_PUBLIC',  7);
 
 

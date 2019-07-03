@@ -38,33 +38,30 @@ if(empty($action)){
 
 
 
-process_voip_event($action, $dataArr);
+process_voip_event($action,     $dataArr);
 process_chatroom_event($action, $dataArr);
-process_group_event($action, $dataArr);
-process_live_event($action, $dataArr);
-process_list_event($action, $dataArr);
-process_proxy_event($action, $dataArr);
-process_other_event($action, $dataArr);
+process_group_event($action, 	$dataArr);
+process_live_event($action, 	$dataArr);
+process_proxy_event($action, 	$dataArr);
+process_other_event($action, 	$dataArr);
 
 
 echo_0('unkown action:'.$action);
 
 
-//推拉流 rtmp rtsp
+//拉流 rtmp rtsp
 function process_proxy_event($action, $dataArr){	
-	
 	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC')){	
 		
 		//{"ts":"1561542285","action":"AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC",
-		//"roomId":"a4aDZfdwsWuTLFkD","listType":"2","channelId":"Wz@NWuVj8Tx5aa4a","conCurrentNumber":"100","extra":"222"}
+		//"roomId":"a4aDZfdwsWuTLFkD","channelId":"Wz@NWuVj8Tx5aa4a","conCurrentNumber":"100","extra":"222"}
 		$channelId  	  = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
 		$roomId  	  = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : 0;
-		$type     = array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0;
 		$specify 	      = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';
 		$extra   		  = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
 		
-		logf("请求创建类型为 $type 的LIVEPROXY_GLOBAL_PUBLIC:$extra");
+		logf("请求创建LIVEPROXY_GLOBAL_PUBLIC:$extra");
 		
 		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
 			echo_0('conCurrentNumber_out_of_limit'); 
@@ -76,7 +73,7 @@ function process_proxy_event($action, $dataArr){
 		}	
 		$userId            = $ret['data']['userId'];		
 	
-		$ret = create_channel($userId, $channelId, channelType_LIVEPROXY_GLOBAL_PUBLIC, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		$ret = create_channel($userId, $channelId, channelType_LIVEPROXY_GLOBAL_PUBLIC, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
 		if($ret != 0){		
 			echo_0('create channel failed:'.$ret);
 		}
@@ -106,7 +103,7 @@ function process_proxy_event($action, $dataArr){
 	//{"action" : "AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL","channelId" : "xxx"}
 	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL')){
 		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
-		
+		//申请拉流转发
 			
 		$ret = get_channel_info($channelId);
 		if($ret['ret'] != 0){
@@ -123,56 +120,10 @@ function process_proxy_event($action, $dataArr){
 		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
 
 		echo_1($data);
-	}
-	
-	
+	}	
 }
 
 
-
-//处理列表事件
-function process_list_event($action, $dataArr){
-	
-	if(!strcasecmp($action, 'AEC_CHATROOM_QUERY_ALL_CHATROOM_LIST')){
-		//{"ts":"1561359529","action":"AEC_CHATROOM_QUERY_ALL_CHATROOM_LIST","listTypes":"0","userId（可选）":"577175"}
-		// listTypes:
-		
-		//如果userId有值，说明是查询自已的
-		$listTypes           = array_key_exists('listTypes', $dataArr)    ? $dataArr['listTypes']    : -1;
-		logf("请求获取类型为 $listTypes 的聊天室列表数据");
-		
-		
-				
-		
-		$ret = get_chatroom_list($listTypes);
-		if($ret['ret'] != 0){	
-			echo_0("get_chatroom_list:".$ret['ret']);		
-		}	
-		
-		logf(json_encode($ret['data'], JSON_UNESCAPED_UNICODE));	
-		
-		echo_1($ret['data']);		
-	}
-		
-	
-	if(!strcasecmp($action, 'AEC_LIVE_QUERY_ALL_CHANNEL_LIST')){
-		//{"ts":"1561631984","action":"AEC_LIVE_QUERY_ALL_CHANNEL_LIST","listTypes":"1,2"}
-		$listTypes           = array_key_exists('listTypes', $dataArr)    ? $dataArr['listTypes']    : -1;
-		logf("请求获取类型为 $listTypes 的channel列表数据");
-		$ret = get_channel_list($listTypes);
-		if($ret['ret'] != 0){	
-			echo_0("get_chatroom_list:".$ret['ret']);		
-		}	
-			
-		logf(json_encode($ret['data'], JSON_UNESCAPED_UNICODE));	
-			
-	
-		
-		echo_1($ret['data']);	
-	}
-	
-	
-}
 
 
 
@@ -225,13 +176,12 @@ function process_chatroom_event($action, $dataArr){
 		//TODO
 		
 		//{"ts":"1561085008","action":"AEC_CHATROOM_CREATE",
-		//"userId":"892500","roomId":"a4a8_KS9sWt36ttn","roomType":"CHAT_ROOM_TYPE_PUBLIC","listType":"0",
+		//"userId":"892500","roomId":"a4a8_KS9sWt36ttn","roomType":"CHAT_ROOM_TYPE_PUBLIC",
 		//"conCurrentNumber":"100","userDefineData":"666"}
 		//其中 userDefineData 是客户端创建聊天室时传的参数，目前传的是聊天室的名字，以后可以传json.
 		
 		
 		$roomType     = array_key_exists('roomType',         $dataArr) ? $dataArr['roomType'] : '';
-		$type       = array_key_exists('listType',         $dataArr) ? $dataArr['listType'] : 0;//业务类型
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';// 最大人数
 		
 		$userDefineData   = rawurldecode(array_key_exists('userDefineData',   $dataArr) ? $dataArr['userDefineData'] : '');		
@@ -247,7 +197,7 @@ function process_chatroom_event($action, $dataArr){
 		logf("$userId 请求新建聊天室:$roomName");
 		
 		//TODO 可以检查userId的权限，以确定他是否有权限创建聊天室
-		$ret = create_chat_room($userId, $roomId, $roomName, $roomType, $type, $conCurrentNumber);
+		$ret = create_chat_room($userId, $roomId, $roomName, $roomType, $conCurrentNumber);
 		if($ret != 0){	
 			echo_0("create_chatroom_failed:$ret");		
 		}		
@@ -288,7 +238,7 @@ function process_chatroom_event($action, $dataArr){
 		//TODO 目前未开放此功能
 		//用户每发一条消息都会回调
 		//开放后，可以在此检查用户余额，如果没钱，不让发消息
-		//也可以在此针对每一条消息对用户进行扣费
+		//可以在此针对每一条消息对用户进行扣费
 		
 		
 	}
@@ -593,9 +543,8 @@ function process_live_event($action, $dataArr){
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
 		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
 		$specify          = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
-		$type        = intval(array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0);//可选
 		
-		logf("$userId 请求创建类型为 $type 的GLOBAL_PUBLIC直播流:$extra");	
+		logf("$userId 请求创建GLOBAL_PUBLIC直播流:$extra");	
 		
 		//TODO 可对该直播流的并发数进行控制，如500
 		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		// 0是不限制
@@ -607,7 +556,7 @@ function process_live_event($action, $dataArr){
 			echo_0('can_not_CreateChannel');
 		}				
 		
-		$ret = create_channel($userId, $channelId, channelType_GLOBAL_PUBLIC, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		$ret = create_channel($userId, $channelId, channelType_GLOBAL_PUBLIC, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
 		if($ret != 0){		
 			echo_0('create channel failed:'.$ret);
 		}	
@@ -624,7 +573,6 @@ function process_live_event($action, $dataArr){
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
 		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
 		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
-		$type        = intval(array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0);//可选
 		
 		//TODO 可对该直播流的并发数进行控制，如500
 		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
@@ -637,7 +585,7 @@ function process_live_event($action, $dataArr){
 		}	
 			
 		
-		$ret = create_channel($userId, $channelId, channelType_LOGIN_PUBLIC, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		$ret = create_channel($userId, $channelId, channelType_LOGIN_PUBLIC, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
 		if($ret != 0){		
 			echo_0('create channel:'.$ret);
 		}
@@ -670,7 +618,7 @@ function process_live_event($action, $dataArr){
 	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_BROADCAST')){	
 		
 		//{"ts":"1561699571","action":"AEC_LIVE_CREATE_CHANNEL_BROADCAST",
-		//"userId":"577175","roomId":"a4aDXK2lEWucjFTB","listType":"9","channelId":"Wz@NWuVjBI3taaCB","conCurrentNumber":"0","extra":"888"}
+		//"userId":"577175","roomId":"a4aDXK2lEWucjFTB","channelId":"Wz@NWuVjBI3taaCB","conCurrentNumber":"0","extra":"888"}
 		
 		$roomId           = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
 		//直播间ID号
@@ -678,9 +626,8 @@ function process_live_event($action, $dataArr){
 		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : '';
 		$extra            = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
 		$specify            = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';// 扩展字段，暂时未用
-		$type        = intval(array_key_exists('listType', $dataArr) ? $dataArr['listType'] : 0);//可选
 		
-		logf("$userId 请求创建类型为 $type 的CHANNEL_BROADCAST广播");
+		logf("$userId 请求创建CHANNEL_BROADCAST广播");
 		
 		//TODO 可对该直播流的并发数进行控制，如500
 		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
@@ -693,7 +640,7 @@ function process_live_event($action, $dataArr){
 		}	
 			
 		
-		$ret = create_channel($userId, $channelId, channelType_BROADCAST, $type, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		$ret = create_channel($userId, $channelId, channelType_BROADCAST, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
 		if($ret != 0){		
 			echo_0('create channel:'.$ret);
 		}

@@ -2,15 +2,15 @@
 
 //channelType:GLOBAL_PUBLIC,
 //ownerType: ROOM_CHANNEL, 
-function create_channel($userId, $channelId, $channelType, $type, $relateId, $relateType, $specify, $extra, $conCurrentNumber){	
+function create_channel($userId, $channelId, $channelType, $relateId, $relateType, $specify, $extra, $conCurrentNumber){	
 	global $g_writeMdb;
 	$ctime = date('Y-m-d H:i:s'); 		
 	try{	
-		$sql = "insert into channels (userId, channelId, channelType, type, relateId, relateType, specify, extra, ctime, conCurrentNumber, lastOnlineTime) values (?,?,?,?,?,?,?,?,?,?,?)";
+		$sql = "insert into channels (userId, channelId, channelType, relateId, relateType, specify, extra, ctime, conCurrentNumber, lastOnlineTime) values (?,?,?,?,?,?,?,?,?,?)";
 		if(!($pstmt = $g_writeMdb->prepare($sql))){           
             return 13;    
         } 
-		if($pstmt->execute(array($userId, $channelId, $channelType, $type, $relateId, $relateType, $specify, $extra, $ctime, $conCurrentNumber, time()))){				
+		if($pstmt->execute(array($userId, $channelId, $channelType, $relateId, $relateType, $specify, $extra, $ctime, $conCurrentNumber, time()))){				
 			return 0;
 		}else{
 			return 14;
@@ -60,7 +60,7 @@ function get_channel_info($channelId){
 
 
 function deleteChannelByUserId($userId, $channelId){	
-	global $g_readMdb;		
+	global $g_writeMdb;		
 	try{	
 		$sql = "delete from `channels` where `channelId` = ? and userId = ? limit 1";			
 		if(!($pstmt = $g_readMdb->prepare($sql))){         
@@ -79,7 +79,7 @@ function deleteChannelByUserId($userId, $channelId){
 
 
 function deleteChannel($channelId){	
-	global $g_readMdb;		
+	global $g_writeMdb;		
 	try{	
 		$sql = "delete from `channels` where `channelId` = ? limit 1";			
 		if(!($pstmt = $g_readMdb->prepare($sql))){         
@@ -170,68 +170,3 @@ function update_channel_state($channelId, $liveState){
 }
 
 
-
-
-function get_channel_list($listTypes){
-	global $g_writeMdb;			
-	$retArr = array();	
-	try{	
-		//里面含有逗号
-		$sql = sprintf("select channelId, relateId, userId, extra from channels where type in (%s) order by id desc", $listTypes);	
-		if(!($pstmt = $g_writeMdb->prepare($sql))){
-            $retArr['ret'] = 12;return $retArr;    
-        } 
-		if($pstmt->execute()){
-			$result = $pstmt->fetchAll();        
-			$resNum = count($result);	
-			
-			//logf("查到 $resNum 条记录:$listTypes");
-		
-			$index  = 0;
-			
-			$channelIdArr  = array();
-			$roomIdArr  = array();
-			$creatorArr = array();
-			$nameArr = array();
-			for($i = 0; $i < $resNum; $i++){			
-				$channelId   = $result[$i][0];				
-				$roomId   = $result[$i][1];				
-				$userId   = $result[$i][2];				
-				$name       = $result[$i][3];					
-				
-				
-				$channelIdArr[$index]  = $channelId;
-				$roomIdArr[$index]  = $roomId;
-				$creatorArr[$index] = $userId;
-				$nameArr[$index] = $name;
-				$index++;
-				
-			}		
-			
-			$data = array();
-			if(!empty($channelIdArr)){
-				$data['channelIdList'] 		= implode(',', $channelIdArr);
-			}	
-			if(!empty($roomIdArr)){
-				$data['roomIdList'] 		= implode(',', $roomIdArr);
-			}	
-			if(!empty($creatorArr)){
-				$data['creatorList'] 		= implode(',', $creatorArr);
-			}
-			if(!empty($nameArr)){
-				$data['userDefineDataList'] = implode(',', $nameArr);
-			}
-			
-			
-						
-			$retArr['ret']  = 0;
-			$retArr['data'] = $data;					 
-			return $retArr;					
-		}else{			
-			$retArr['ret'] = 13;return $retArr;	
-		}    
-	}catch(PDOException $e){	
-		$retArr['ret'] = 11;return $retArr;	
-	}
-	$retArr['ret'] = 10;return $retArr;	
-}
