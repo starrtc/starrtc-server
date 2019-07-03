@@ -4,7 +4,7 @@ require_once($dir . '/config.php');
 
 //直接给前端用的api，用于获取列表
 
-//listTypes：用户自定义类型参数列表，可以传1，也可以传多种类型的组合值，如1，2（用英文逗号分隔）
+//listTypes：保存列表时自定义的类型参数列表，可以传1，也可以传多种类型的组合值，如1，2（用英文逗号分隔）
 $listTypes = array_key_exists('listTypes', $_REQUEST) ? $_REQUEST['listTypes'] : -1;
 //userId 是可选参数，如果userId有值，说明是获取自已的channel列表，没有值是获取所有的channel。
 $userId    = array_key_exists('userId', $_REQUEST) ? $_REQUEST['userId'] : 0;

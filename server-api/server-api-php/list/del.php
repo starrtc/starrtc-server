@@ -3,7 +3,8 @@
 $dir = dirname(dirname(__FILE__));
 require_once($dir . '/config.php');
 
-//保存列表的接口
+//删除列表的接口
+
 
 $userId  = array_key_exists('userId', $_REQUEST) ? $_REQUEST['userId'] : 0;
 $listType  = array_key_exists('listType', $_REQUEST) ? $_REQUEST['listType'] : -1;
