@@ -6,7 +6,7 @@
 
 //参见 https://docs.starrtc.com/zh-cn/docs/aec-index.html
 
-//author: admin@elesos.com
+//author: admin#elesos.com
 
 $aec_dir = dirname(__FILE__);
 require_once($aec_dir . '/config.php');
@@ -41,7 +41,7 @@ if(empty($action)){
 process_voip_event($action,     $dataArr);
 process_chatroom_event($action, $dataArr);
 process_group_event($action, 	$dataArr);
-process_live_event($action, 	$dataArr);
+process_channel_event($action, 	$dataArr);
 process_proxy_event($action, 	$dataArr);
 process_other_event($action, 	$dataArr);
 
@@ -49,79 +49,6 @@ process_other_event($action, 	$dataArr);
 echo_0('unkown action:'.$action);
 
 
-//拉流 rtmp rtsp
-function process_proxy_event($action, $dataArr){	
-	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC')){	
-		
-		//{"ts":"1561542285","action":"AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC",
-		//"roomId":"a4aDZfdwsWuTLFkD","channelId":"Wz@NWuVj8Tx5aa4a","conCurrentNumber":"100","extra":"222"}
-		$channelId  	  = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
-		$roomId  	  = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
-		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : 0;
-		$specify 	      = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';
-		$extra   		  = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
-		
-		logf("请求创建LIVEPROXY_GLOBAL_PUBLIC:$extra");
-		
-		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
-			echo_0('conCurrentNumber_out_of_limit'); 
-		}
-		
-		$ret = get_room_info($roomId);	
-		if($ret['ret'] != 0){			
-			echo_0('get room info err:'.$ret['ret']);
-		}	
-		$userId            = $ret['data']['userId'];		
-	
-		$ret = create_channel($userId, $channelId, channelType_LIVEPROXY_GLOBAL_PUBLIC, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
-		if($ret != 0){		
-			echo_0('create channel failed:'.$ret);
-		}
-		echo_1('LIVEPROXY_GLOBAL_PUBLIC_create_success');		
-		
-	}
-	
-	//{"action" : "AEC_LIVE_LIVEPROXY_DELETE_CHANNEL","channelId" : "xxx"}
-	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_DELETE_CHANNEL')){
-		logf("请求删除LIVEPROXY_CHANNEL");
-		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
-		$ret = deleteChannel($channelId);
-		if($ret != 0){					  	
-			echo_0('deleteChannel_failed');				
-		}
-		
-		echo_1('LIVEPROXY_CHANNEL_delete_success');				
-	}
-	
-	//{"action" : "AEC_LIVE_LIVEPROXY_CLOSE_CHANNEL","channelId" : "xxx"}
-	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CLOSE_CHANNEL')){
-		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
-		logf("请求关闭LIVEPROXY_CHANNEL");
-		echo_1('LIVEPROXY_CHANNEL_close_success');	
-		
-	}
-	//{"action" : "AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL","channelId" : "xxx"}
-	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL')){
-		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
-		//申请拉流转发
-			
-		$ret = get_channel_info($channelId);
-		if($ret['ret'] != 0){
-			if($ret['ret'] == 14){
-				echo_0('channel not exist');
-			}
-			echo_0('get_channel_info_failed:'.$ret['ret']);
-		}
-		$channelInfo = $ret['data'];	
-		
-		
-		
-		$data = array();
-		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
-
-		echo_1($data);
-	}	
-}
 
 
 
@@ -241,10 +168,7 @@ function process_chatroom_event($action, $dataArr){
 		//可以在此针对每一条消息对用户进行扣费
 		
 		
-	}
-	
-	
-	
+	}	
 }
 
 
@@ -276,37 +200,7 @@ function process_group_event($action, $dataArr){
 		echo_1($groupId);	
 	}
 	
-	
-	// 返回自已的群列表：获取某用户所在的所有群的群id
-	if(!strcasecmp($action, 'AEC_GROUP_GET_GROUP_LIST')){
-		//{"ts":"1561705484","action":"AEC_GROUP_GET_GROUP_LIST","userId":"577175"}
-		//返回：{"status":"x","data":{"groupIdList":"1000,1001,1002","groupNameList":"gname1,gname2,gname3","creatorList":"userId1,userId2,userId3"}}
-		logf("$userId 请求获取自已的群列表");
-		$ret = get_my_group_list($userId);
-		if($ret['ret'] != 0){	
-			echo_0('get_my_group_list_failed:'.$ret['ret']);
-		}	
-		
-		echo_1($ret['data']);
-		
-	}
-	
-	// {"ts":"1561706743","action":"AEC_GROUP_GET_USER_LIST","userId":"577175","groupId":"100382"}
-	if(!strcasecmp($action, 'AEC_GROUP_GET_USER_LIST')){
-		//获取某个群的所有成员的userId
-		$groupId    = array_key_exists('groupId', $dataArr)    ? $dataArr['groupId'] : 0;		
-		logf("$userId 请求获取自已的群 $groupId 里面的成员与该群的免打扰状态");		
-		//返回： {"status":"x","data":{"userIdList":"userId1,userId2,userId3","isIgnore":"1"}}
-		
-		//TODO 检查是不是自已的群
-		$ret = get_group_memberlist($userId, $groupId);
-		if($ret['ret'] != 0){	
-			echo_0('get_group_memberlist_failed:'.$ret['ret']);
-		}
-		logf(json_encode($ret['data']));
-		echo_1($ret['data']);
-		
-	}
+
 	if(!strcasecmp($action, 'AEC_GROUP_SYNC_ALL')){
 		//TODO
 		
@@ -529,7 +423,7 @@ function process_group_event($action, $dataArr){
 
 //==============================直播事件通知========================
 //https://docs.starrtc.com/zh-cn/docs/aec-live.html
-function process_live_event($action, $dataArr){	
+function process_channel_event($action, $dataArr){	
 	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
 	if(!strcasecmp($action, 'AEC_LIVE_CREATE_CHANNEL_GLOBAL_PUBLIC')){
 		//TODO
@@ -645,8 +539,7 @@ function process_live_event($action, $dataArr){
 			echo_0('create channel:'.$ret);
 		}
 			
-		echo_1('BROADCAST_create_success');			
-		
+		echo_1('BROADCAST_create_success');				
 	}
 	
 	
@@ -674,14 +567,12 @@ function process_live_event($action, $dataArr){
 		/* $creator                = $channelInfo['userId'];	
 		if(strcasecmp($creator, $userId)){
 			echo_0('you are not the live creator');
-		}		 */
-	
+		}		 */	
 		
 		$data = array();	
 		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
 		echo_1($data);		
-	}
-	
+	}	
 	
 	if(!strcasecmp($action, 'AEC_LIVE_SET_CHANNEL_UPLOADER')){
 		//TODO 检查权限，返回1表示通过
@@ -696,9 +587,7 @@ function process_live_event($action, $dataArr){
 		echo_1('UNSET_CHANNEL_UPLOADER_success');	
 	}
 	
-	if(!strcasecmp($action, 'AEC_LIVE_UPLOADER_DISCONNECT')){
-		
-		
+	if(!strcasecmp($action, 'AEC_LIVE_UPLOADER_DISCONNECT')){		
 		logf("上传者 $userId 断开连接（离开）直播间");
 		
 		//TODO 检查是不是自己的 channel, 更新直播状态	
@@ -734,8 +623,7 @@ function process_live_event($action, $dataArr){
 		if($ret != 0){
 			echo_0('update_channel_state:'.$ret);
 		}	
-		
-		
+			
 		
 		//TODO 可检查用户，如果余额不足，可通过此事件终止用户继续直播。
 		//echo_0("余额不足");		
@@ -783,16 +671,86 @@ function process_live_event($action, $dataArr){
 		logf("用户 $userId 停止观看直播");
 		echo_1('USER_OFFLINE_success');
 	}
-	
-	
 		
 	
 	if($action == 'AEC_LIVE_APPLY_DOWNLOAD_CHANNEL'){//申请下载直播流	
 		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
 		logf("用户 $userId 申请下载直播流");
 		echo_1('success'); 	
+	}	
+}
+
+
+
+//拉流 rtmp rtsp
+function process_proxy_event($action, $dataArr){	
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC')){	
+		
+		//{"ts":"1561542285","action":"AEC_LIVE_LIVEPROXY_CREATE_CHANNEL_GLOBAL_PUBLIC",
+		//"roomId":"a4aDZfdwsWuTLFkD","channelId":"Wz@NWuVj8Tx5aa4a","conCurrentNumber":"100","extra":"222"}
+		$channelId  	  = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : '';
+		$roomId  	  = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : '';
+		$conCurrentNumber = array_key_exists('conCurrentNumber', $dataArr) ? $dataArr['conCurrentNumber'] : 0;
+		$specify 	      = array_key_exists('specify', $dataArr) ? $dataArr['specify'] : '';
+		$extra   		  = array_key_exists('extra', $dataArr) ? $dataArr['extra'] : '';
+		
+		logf("请求创建LIVEPROXY_GLOBAL_PUBLIC:$extra");
+		
+		if($conCurrentNumber > 500 || $conCurrentNumber < 0){		
+			echo_0('conCurrentNumber_out_of_limit'); 
+		}
+		
+		$ret = get_room_info($roomId);	
+		if($ret['ret'] != 0){			
+			echo_0('get room info err:'.$ret['ret']);
+		}	
+		$userId            = $ret['data']['userId'];		
+	
+		$ret = create_channel($userId, $channelId, channelType_LIVEPROXY_GLOBAL_PUBLIC, $roomId, relateType_ROOM_CHANNEL, $specify, $extra, $conCurrentNumber);    
+		if($ret != 0){		
+			echo_0('create channel failed:'.$ret);
+		}
+		echo_1('LIVEPROXY_GLOBAL_PUBLIC_create_success');				
 	}
 	
+	//{"action" : "AEC_LIVE_LIVEPROXY_DELETE_CHANNEL","channelId" : "xxx"}
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_DELETE_CHANNEL')){
+		logf("请求删除LIVEPROXY_CHANNEL");
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		$ret = deleteChannel($channelId);
+		if($ret != 0){					  	
+			echo_0('deleteChannel_failed');				
+		}
+		
+		echo_1('LIVEPROXY_CHANNEL_delete_success');				
+	}
+	
+	//{"action" : "AEC_LIVE_LIVEPROXY_CLOSE_CHANNEL","channelId" : "xxx"}
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_CLOSE_CHANNEL')){
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		logf("请求关闭LIVEPROXY_CHANNEL");
+		echo_1('LIVEPROXY_CHANNEL_close_success');	
+		
+	}
+	//{"action" : "AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL","channelId" : "xxx"}
+	if(!strcasecmp($action, 'AEC_LIVE_LIVEPROXY_APPLY_UPLOAD_CHANNEL')){
+		$channelId = array_key_exists('channelId', $dataArr) ? $dataArr['channelId'] : 0;
+		//申请拉流转发
+			
+		$ret = get_channel_info($channelId);
+		if($ret['ret'] != 0){
+			if($ret['ret'] == 14){
+				echo_0('channel not exist');
+			}
+			echo_0('get_channel_info_failed:'.$ret['ret']);
+		}
+		$channelInfo = $ret['data'];			
+		
+		$data = array();
+		$data['conCurrentNumber'] = $channelInfo['conCurrentNumber'];
+
+		echo_1($data);
+	}	
 }
 
 
@@ -828,7 +786,5 @@ function process_other_event($action, $dataArr){
 	if(!strcasecmp($action, 'AEC_GROUP_PUSH_SYSTEM_GROUP_MSG')){//推送群系统消息到指定群
 		//{"action" : "AEC_GROUP_PUSH_SYSTEM_GROUP_MSG","groupId":"xxx","userId" : "xxx"}
 		echo_0('no rights'); 	
-	}
-
-	
+	}	
 }

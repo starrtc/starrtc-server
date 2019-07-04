@@ -92,25 +92,6 @@ function isRoomIdExist($roomId){
 
 
 
-//更新chatroom类型
-function update_chatroom_type($roomId, $type){
-	global $g_writeMdb;			
-	try{
-		$sql = "update chatRoom set type = ? where roomId = ? limit 1";
-		if(!($pstmt = $g_writeMdb->prepare($sql))){ 
-			return 12;
-		}   
-		if($pstmt->execute(array($type, $roomId))){
-			return 0;	
-		}else{
-			return 13;
-		}		
-	}catch(PDOException $e){
-		return 11;
-	}	
-    return 10;
-}
-
 
 
 

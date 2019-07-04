@@ -5,10 +5,29 @@ require_once($dir . '/config.php');
 
 //保存列表的接口
 
-$userId  = array_key_exists('userId', $_REQUEST) ? $_REQUEST['userId'] : 0;
-$listType  = array_key_exists('listType', $_REQUEST) ? $_REQUEST['listType'] : -1;
-$roomId = array_key_exists('roomId', $_REQUEST) ? $_REQUEST['roomId'] : 0;
-$data = array_key_exists('data', $_REQUEST) ? $_REQUEST['data'] : 0;
+
+if (!isset($GLOBALS['HTTP_RAW_POST_DATA'])){
+	$GLOBALS['HTTP_RAW_POST_DATA'] = file_get_contents('php://input');
+}		
+$postStr = $GLOBALS['HTTP_RAW_POST_DATA'];
+
+
+
+$postArr = explode('&', $postStr);
+
+$dataArr = array();
+foreach($postArr as $v){
+	$item = explode('=', $v);
+	$key   = $item[0];
+	$value = $item[1];
+	$dataArr[$key] = $value;	
+}
+
+
+$userId  = array_key_exists('userId', $dataArr) ? $dataArr['userId'] : 0;
+$listType  = array_key_exists('listType', $dataArr) ? $dataArr['listType'] : -1;
+$roomId = array_key_exists('roomId', $dataArr) ? $dataArr['roomId'] : 0;
+$data = array_key_exists('data', $dataArr) ? $dataArr['data'] : 0;
 
 
 

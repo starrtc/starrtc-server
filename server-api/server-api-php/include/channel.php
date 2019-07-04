@@ -28,7 +28,7 @@ function get_channel_info($channelId){
 	global $g_readMdb;
     $retArr = array();
     try{  
-        $sql = "select id, conCurrentNumber, userId, type, relateId from channels where channelId = ? limit 1";
+        $sql = "select id, conCurrentNumber, userId, relateId from channels where channelId = ? limit 1";
         if(!($pstmt = $g_readMdb->prepare($sql))){
             $retArr['ret'] = 12;return $retArr;
         }
@@ -43,7 +43,6 @@ function get_channel_info($channelId){
             $channelInfo['id']       = $result[0][0];
             $channelInfo['conCurrentNumber']   = $result[0][1];
             $channelInfo['userId']   = $result[0][2];
-            $channelInfo['type'] = $result[0][3];
 			$channelInfo['relateId']  = $result[0][4];
             $retArr['ret']  = 0;
             $retArr['data'] = $channelInfo;
@@ -131,24 +130,8 @@ function canCreateChannel($userId){
 
 
 
-//更新chatroom类型
-function update_channel_type($channelId, $type){
-	global $g_writeMdb;			
-	try{
-		$sql = "update channels set type = ? where channelId = ? limit 1";
-		if(!($pstmt = $g_writeMdb->prepare($sql))){ 
-			return 12;
-		}   
-		if($pstmt->execute(array($type, $channelId))){
-			return 0;	
-		}else{
-			return 13;
-		}		
-	}catch(PDOException $e){
-		return 11;
-	}	
-    return 10;
-}
+
+
 
 
 function update_channel_state($channelId, $liveState){	
