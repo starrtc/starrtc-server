@@ -101,7 +101,7 @@ nohup ./videoRecServer > videoRecServer.log 2>&1 &
 拉流服务端部署
 ==
 用于拉取第三方rtsp流(RTMP流暂未开放)，转换为starRTC协议后转发到liveSrcServer，
-然后就可以在各终端的在线会议或互动直播中播放这个流了。
+然后就可以在各终端(Android,iOS,PC和web)的在线会议或互动直播中播放这个流了。
 
 ```java  
 后台启动：

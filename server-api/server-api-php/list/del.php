@@ -10,7 +10,7 @@ $userId  = array_key_exists('userId', $_REQUEST) ? $_REQUEST['userId'] : 0;
 $listType  = array_key_exists('listType', $_REQUEST) ? $_REQUEST['listType'] : -1;
 $roomId = array_key_exists('roomId', $_REQUEST) ? $_REQUEST['roomId'] : 0;
 
-
+logf("$userId 请求删除类型为 $listType 的 $roomId");
 $ret = del_list($userId, $listType, $roomId);
 if($ret != 0){
 	echoErr('del_list_failed:'.$ret);

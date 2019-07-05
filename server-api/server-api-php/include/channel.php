@@ -43,7 +43,7 @@ function get_channel_info($channelId){
             $channelInfo['id']       = $result[0][0];
             $channelInfo['conCurrentNumber']   = $result[0][1];
             $channelInfo['userId']   = $result[0][2];
-			$channelInfo['relateId']  = $result[0][4];
+			$channelInfo['relateId']  = $result[0][3];
             $retArr['ret']  = 0;
             $retArr['data'] = $channelInfo;
             return $retArr;
