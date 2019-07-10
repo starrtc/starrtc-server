@@ -137,12 +137,12 @@ http://www.xxx.com:19932/delete?channelId=xxxx
 ====
 | 服务端        | 端口           | web端需开放端口            | 
 | ------------- |:-------------  |:-------------  |
-| msgServer     | 19903(tcp)     | 29991(https信任测试 tcp)   | 
-| voipServer    | 10086 udp  44446(P2P通讯 udp)    | 10087(websocket tcp) 10088(webrtc udp)   29992(https信任测试 tcp)| 
-| chatRoomServer| 19906 tcp      | 29993(https信任测试 tcp) | 
-| liveSrcServer | 19931 udp      | 19934(websocket tcp) 19935(webrtc udp) 29994(https信任测试 tcp) |
-| liveVdnServer | 19928 udp    	 | 19940(websocket tcp) 19941(webrtc udp) 29995(https信任测试 tcp)	|
-| liveProxyServer |19932 tcp  	 |   |
+| msgServer      | 19903(tcp)     | 29991(tcp):https信任测试   | 
+| voipServer     | 10086(udp)  44446(udp):P2P通讯     | 10087(tcp):websocket 10088(udp):webrtc   29992(tcp):https信任测试| 
+| chatRoomServer | 19906(tcp)      | 29993(tcp):https信任测试  | 
+| liveSrcServer  | 19931(udp)       | 19934(tcp):websocket 19935(udp):webrtc 29994(tcp):https信任测试 |
+| liveVdnServer  | 19928(udp)     	 | 19940(tcp):websocket 19941(udp):webrtc 29995(tcp):https信任测试	|
+| liveProxyServer |19932(tcp)   	 |   |
 
 
 测试方法
