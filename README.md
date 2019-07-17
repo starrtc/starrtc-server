@@ -18,7 +18,7 @@
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) web-supported目录里面是支持web端的服务端程序与自签名证书。do-not-support-web目录里面的服务端程序不支持web端。
 
-**支持CentOS 64bit，Ubuntu 64bit**。Windows上请自行安装虚拟机或docker测试。
+**支持CentOS 64bit，Ubuntu 64bit**。Windows上请自行安装虚拟机(请使用桥接)或docker测试。
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) 部署步骤（请切换为root用户或者用sudo执行）：
 
