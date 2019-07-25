@@ -17,4 +17,4 @@ nohup ./liveProxyServer > logs/liveProxyServer.log 2>&1 &
 
 ps -aux | grep Server
 sleep 3
-cat logs/msgServer.log 
+head -n 12 logs/msgServer.log
