@@ -1,16 +1,20 @@
 #!/bin/bash
 
-git config core.fileMode false
-chmod +x *Server
+git config core.fileMode false #忽略文件权限变化
+chmod +x *Server			#文件加权限
 
-nohup ./msgServer     > msgServer.log 2>&1 &
-nohup ./chatDBServer  > chatDBServer.log 2>&1 &
-nohup ./groupServer   > groupServer.log 2>&1 &
-nohup ./voipServer > voipServer.log 2>&1 &
-nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
-nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
-nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
-nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
+mkdir logs
+chmod -R 777 logs
+
+nohup ./msgServer       > logs/msgServer.log 2>&1 &
+nohup ./chatDBServer    > logs/chatDBServer.log 2>&1 &
+nohup ./groupServer     > logs/groupServer.log 2>&1 &
+nohup ./voipServer      > logs/voipServer.log 2>&1 &
+nohup ./chatRoomServer  > logs/chatRoomServer.log 2>&1 &
+nohup ./liveSrcServer   > logs/liveSrcServer.log 2>&1 &
+nohup ./liveVdnServer   > logs/liveVdnServer.log 2>&1 &
+nohup ./liveProxyServer > logs/liveProxyServer.log 2>&1 &
 
 ps -aux | grep Server
 
+tail -f logs/msgServer.log #查看msgServer的日志

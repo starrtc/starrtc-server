@@ -84,12 +84,11 @@ liveVdn服务端部署
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 ```
 
-
 录制服务端部署
 ==
-目前用于liveSrcServer和voipServer的视频录像功能，视频以flv的格式保存到RECFOLDER目录，
+目前用于liveSrcServer和voipServer的视频录像功能，目前为测试版，输出为ts切片，暂时没有音频，后续会加上。
 
-文件名格式为：用户名_日期_时_分_秒，如userId_20190529_15_08_02.flv
+文件目录格式为：./RECFOLDER/用户名/业务服务名_毫秒数_切片序号.ts，如./RECFOLDER/userId/liveSrcServer_873692718_1.ts
 
 开启此服务就会打开录制功能，如果想停止录制，可以关闭此服务。
 
@@ -97,6 +96,58 @@ nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 后台启动：
 nohup ./videoRecServer > videoRecServer.log 2>&1 &
 ```
+
+系统新消息代理服务器
+==
+一般用户使用AEC高级模式的情况下使用，比如给某用户发送系统消息(例如购买消费成功通知)，或给某个群的全部用户发送群系统消息(例如某人进群、退群)。
+
+请注意该服务仅供内网其他服务使用，不要将19922端口暴露到外网！
+
+
+```java 
+push系统消息:
+toUsers：需要发送消息的所有用户，用逗号隔开
+msg： 需要发送的文本内容
+digest： 需要发送的文本内容的摘要，用于用户不在线时的push推送使用
+http://www.xxx.com:19922/pushSystemMsgToUsers?toUsers=userId1,userId2,userId3,...&msg=xxxx&digest=xxxx
+
+push群消息(全员):   
+http://www.xxx.com:19922/pushGroupMsg?groupId=xxx&msg=xxxx
+```
+
+下面五个和群有关的接口，在客户端sdk同样有实现，但通过这些接口，服务端可以主动给群服务器同步群成员，或对群成员进行其他操作，请您根据实际需求来选取合适的群成员同步策略。
+```java 
+同步时不传groupList表示清空这个群的成员
+同步群成员:	
+groupId: 要同步的群id
+groupList: 要同步的群内部的所有用户id，用逗号隔开
+ignoreList： 设置过消息免打扰的素有用户id，用逗号隔开
+http://www.xxx.com:19922/syncGroupList?groupId=xxx&groupList=userId1,userId2,userId3,...&ignoreList=userId1,userIdx,...
+
+添加群好友:   
+groupId: 要操作的群id
+addedUsers: 要添加进的群的所有用户id，用逗号隔开
+http://www.xxx.com:19922/addUsersToGroup?groupId=xxx&addedUsers=userId1,userId2,userId3,...
+
+删除群好友:   
+groupId: 要操作的群id
+deledUsers: 需要从群内删除的所有用户id，用逗号隔开
+http://www.xxx.com:19922/delUsersFromGroup?groupId=xxx&deledUsers=userId1,userId2,userId3,...
+
+设置免打扰:	
+groupId: 要操作的群id
+ignoreList: 需要从针对改群添加免打扰的所有用户id，用逗号隔开
+http://www.xxx.com:19922/setPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,...
+
+取消免打扰:	
+groupId: 要操作的群id
+ignoreList: 需要从针对改群取消免打扰的所有用户id，用逗号隔开
+http://www.xxx.com:19922/unsetPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,...
+```
+
+
+
+
 
 拉流服务端部署
 ==
