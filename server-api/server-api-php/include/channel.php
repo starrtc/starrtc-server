@@ -62,7 +62,7 @@ function deleteChannelByUserId($userId, $channelId){
 	global $g_writeMdb;		
 	try{	
 		$sql = "delete from `channels` where `channelId` = ? and userId = ? limit 1";			
-		if(!($pstmt = $g_readMdb->prepare($sql))){         
+		if(!($pstmt = $g_writeMdb->prepare($sql))){         
             return 12;    
         } 
 		if($pstmt->execute(array($channelId, $userId))){			
@@ -81,7 +81,7 @@ function deleteChannel($channelId){
 	global $g_writeMdb;		
 	try{	
 		$sql = "delete from `channels` where `channelId` = ? limit 1";			
-		if(!($pstmt = $g_readMdb->prepare($sql))){         
+		if(!($pstmt = $g_writeMdb->prepare($sql))){         
             return 12;    
         } 
 		if($pstmt->execute(array($channelId))){			

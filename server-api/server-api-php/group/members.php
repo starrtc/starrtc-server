@@ -15,7 +15,7 @@ if(empty($userId) || empty($groupId)){
 //TODO 检查是不是自已的群
 $ret = get_group_memberlist($userId, $groupId);
 if($ret['ret'] != 0){	
-	echoErr('get_group_memberlist_failed:'.$ret['ret']);
+	echoErr($groupId.':get_group_memberlist_failed:'.$ret['ret']);
 }
 echoK($ret['data']);
 
