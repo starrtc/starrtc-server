@@ -14,6 +14,7 @@
 | liveVdnServer | 互动连麦直播，vdn分发网络		      |     |
 | liveProxyServer | RTSP 拉流服务端     				      |     |
 | videoRecServer | 录制录像功能     				      |     |
+| groupHttpProxyServer | 系统消息及群操作功能     				      |     |
 
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) web-supported目录里面是支持web端的服务端程序与自签名证书。do-not-support-web目录里面的服务端程序不支持web端。
@@ -97,9 +98,9 @@ nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 nohup ./videoRecServer > videoRecServer.log 2>&1 &
 ```
 
-系统新消息代理服务器
+系统消息及群操作功能服务
 ==
-一般用户使用AEC高级模式的情况下使用，比如给某用户发送系统消息(例如购买消费成功通知)，或给某个群的全部用户发送群系统消息(例如某人进群、退群)。
+用户使用AEC高级模式的情况下使用，比如给某用户发送系统消息(例如购买消费成功通知)，或给某个群的全部用户发送群系统消息(例如某人进群、退群)。
 
 请注意该服务仅供内网其他服务使用，不要将19922端口暴露到外网！
 

@@ -16,5 +16,5 @@ nohup ./liveVdnServer   > logs/liveVdnServer.log 2>&1 &
 nohup ./liveProxyServer > logs/liveProxyServer.log 2>&1 &
 
 ps -aux | grep Server
-
-tail -f logs/msgServer.log #查看msgServer的日志
+sleep 3
+cat logs/msgServer.log
