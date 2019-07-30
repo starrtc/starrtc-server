@@ -11,8 +11,8 @@ error_reporting(E_ALL);
 define('writeServer',  'localhost');//数据库配置
 define('readServer',   'localhost');
 define('database',     'starRTC_private');
-define('username',     'xxx');
-define('password',     'xxx');
+define('username',     'root');
+define('password',     'password');
 
 
 

@@ -16,5 +16,5 @@ nohup ./liveVdnServer   > logs/liveVdnServer.log 2>&1 &
 nohup ./liveProxyServer > logs/liveProxyServer.log 2>&1 &
 
 ps -aux | grep Server
-sleep 5
-cat logs/msgServer.log 
+sleep 3
+head -n 12 logs/msgServer.log
