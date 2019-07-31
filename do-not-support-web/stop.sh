@@ -8,6 +8,7 @@ killall groupServer
 killall liveSrcServer
 killall liveProxyServer
 killall liveVdnServer
+killall groupPushHttpProxy
 
 
 sleep 1
@@ -21,6 +22,7 @@ killall groupServer
 killall liveSrcServer
 killall liveProxyServer
 killall liveVdnServer
+killall groupPushHttpProxy
 
 
 ps -aux | grep Server
