@@ -24,7 +24,7 @@ if(!file_exists($dir_dest)){
 	}
 }
  					     
-$pic_url = "https://www.starrtc.com/aec/uploads/$year/$month/$day/";  # 文档的访问url
+$pic_url = doc_upload_url."$year/$month/$day/";  # 文档的访问url
 
 
 // we create an instance of the class, giving as argument the PHP object

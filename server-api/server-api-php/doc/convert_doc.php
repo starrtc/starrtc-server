@@ -41,7 +41,7 @@ if(!strcasecmp($file_ext, 'pdf')){
 		}		
 	}
 	
-	$cmd = 'convert -density 300 -trim '.$full_path . '[0-29] -quality 100 '. $dest_full_path . '/starRTC.jpg';
+	$cmd = 'convert -density 300 -trim '.$full_path . '[0-4] -quality 100 '. $dest_full_path . '/starRTC.jpg';
 	echo "cmd=$cmd \r\n";
 	exec($cmd);
 	

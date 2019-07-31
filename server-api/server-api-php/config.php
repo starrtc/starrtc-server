@@ -15,6 +15,12 @@ define('username',     'root');
 define('password',     'password');
 
 
+define('doc_upload_url', 'https://123.103.93.74/aec/uploads/');# 文档的访问url
+
+
+
+
+
 
 
 
