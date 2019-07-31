@@ -2,6 +2,9 @@
 
 git config core.fileMode false #忽略文件权限变化
 chmod +x *Server			#文件加权限
+chmod +x *Proxy
+
+
 
 mkdir logs
 chmod -R 777 logs
