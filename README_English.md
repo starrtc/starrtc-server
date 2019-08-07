@@ -47,78 +47,84 @@ In order to verify whether the startup is successful, you can start it without b
 Then you can judge the startup status by seeing the output log.
 If the startup is successful, you can start it in the background.
 ```
-Note: It is also necessary to deploy msgServer for transmitting calls, receiving calls and other messages.
+Note: It is also necessary to deploy msgServer for sending calls, receiving calls and other messages.
 
-IM服务端部署
+
+Deployment of IM server 
 ==
-IM全套服务，分为3个服务端程序，分别是:
+IM full service contains 3 server programs. They are:
 
-消息服务端msgServer、离线消息数据服务端chatDBServer，群管理服务端groupServer，分别启动即可。
+The message server:msgServer, the offline message data server:chatDBServer, and the group management server:groupServer.
+the servers can be started separately.
 
-只需要单聊的，不需要启动groupServer。
+If you just need one-to-one chat, you do not need to start groupServer.
 
-可以保持自己原有的im系统不变，用我们的im系统作为voip等服务的信令服务。
+You can keep your original im system unchanged, and use our im system as a signaling service which serves for services such as voip.
 ```java
-后台启动：
+Start the program in the background:
 nohup ./msgServer     > msgServer.log 2>&1 &
 nohup ./chatDBServer  > chatDBServer.log 2>&1 &
 nohup ./groupServer   > groupServer.log 2>&1 &
 ```
 
-chatRoom服务端部署
+Deployment of chatRoom server 
 ==
 ```java
-后台启动：
+Start the program in the background:
 nohup ./chatRoomServer > chatRoomServer.log 2>&1 &
 ```
 
-liveSrc服务端部署
+Deployment of liveSrc server 
 ==
 ```java  
-后台启动：
+Start the program in the background:
 nohup ./liveSrcServer > liveSrcServer.log 2>&1 &
 ```
 
-RTMP推流测试:可打开安卓客户端，新建一个会议室，点击RTMP推流，填上RTMP URL后，点击推流即可。然后用其它第3方播放器如VLC就可以打开该RTMP URL观看会议画面了。
+Push RTMP stream test: open the android client app and create a new meeting room, then click RTMP button to fill in the RTMP URL, and click the push stream button. 
+Then you can open the RTMP URL to watch the meeting screen by the other 3rd party player such as VLC player.
 
-同理，可以在直播间推流，用vlc打开就可以观看直播了。
 
-liveVdn服务端部署
+You can push the stream in the live broadcast room in the same way, then you can watch the live broadcast with vlc player.
+
+Deployment of liveVdn server 
 ==
-互动直播，观众不限人数
+There are unlimited number of viewers in live broadcast chatroom,
 ```java  
-后台启动：
+Start the program in the background:
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 ```
 
-录制服务端部署
+Deployment of recording server 
 ==
-目前用于liveSrcServer和voipServer的视频录像功能，目前为测试版，输出为ts切片，暂时没有音频，后续会加上。
+The video recording function is used for liveSrcServer and voipServer currently,which 
+is a beta version now. And the output is ts slice, while there is no audio at the moment that will be added later.
 
-文件目录格式为：./RECFOLDER/用户名/业务服务名_毫秒数_切片序号.ts，如./RECFOLDER/userId/liveSrcServer_873692718_1.ts
 
-开启此服务就会打开录制功能，如果想停止录制，可以关闭此服务。
+The format of file directory is：./RECFOLDER/username/serviceName_NumberOfMilliseconds_SliceNumber.ts，such as:./RECFOLDER/userId/liveSrcServer_873692718_1.ts
+
+The recording function will work if startup this server. And if you want to stop recording, you can shut down the server.
 
 ```java  
-后台启动：
+Start the program in the background:
 nohup ./videoRecServer > videoRecServer.log 2>&1 &
 ```
 
-系统消息及群操作功能服务
+System message and group operation function Server
 ==
-用户使用AEC高级模式的情况下使用，比如给某用户发送系统消息(例如购买消费成功通知)，或给某个群的全部用户发送群系统消息(例如某人进群、退群)。
+the server will be worked when the user uses the AEC advanced mode. For example, sending a system message to a user( such as a notification of purchase successfully ), or sending a group system message to all users of the group((such as someone entering or leaving a group).
 
-请注意该服务仅供内网其他服务使用，不要将19922端口暴露到外网！
+Please pay attention that this service is only available for other services on the intranet. Do not expose the port 19922 to the external network!
 
 
 ```java 
-push系统消息:
-toUsers：需要发送消息的所有用户，用逗号隔开
-msg： 需要发送的文本内容
-digest： 需要发送的文本内容的摘要，用于用户不在线时的push推送使用
+push system information:
+toUsers：all users who need to send a message, separated by commas
+msg： Text message that needs to be sent
+digest： a summary of the text message that needs to be sent for push mode when the user is offline
 http://www.xxx.com:19922/pushSystemMsgToUsers?toUsers=userId1,userId2,userId3,...&msg=xxxx&digest=xxxx
 
-push群消息(全员):   
+Push group message (all members):   
 http://www.xxx.com:19922/pushGroupMsg?groupId=xxx&msg=xxxx
 ```
 
