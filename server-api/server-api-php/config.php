@@ -65,6 +65,7 @@ define('log_file',  $api_config_dir . '/log.txt');
 require_once($api_config_dir . '/include/errCode.php');
 require_once($api_config_dir . '/include/pubFun.php');
 require_once($api_config_dir . '/include/dbBase.php');
+require_once($api_config_dir . '/include/star_api.php');
 
 
 $ret = getReadMdb();

@@ -241,7 +241,7 @@ function process_group_event($action, $dataArr){
 		
 		logf("$userId 请求向群 $groupId 新增群成员: $addUsers");
 		
-		//TODO：可以判断userId是不是群里面的成员，如果不是群里面的成员，可以不让其邀请别人进群
+		//TODO：可以判断 userId 是不是群里面的成员，如果不是群里面的成员，可以不让其邀请别人进群
 		//或者判断userId是不是群的创建者，从而实现只允许创建者邀请别人进群
 		$addUsersArr = explode(",", $addUsers);
 		foreach($addUsersArr as $userId){

@@ -54,6 +54,14 @@ function echoK_zh($data, $exit = 1){
 	}	
 }
 
+function echoDebug($data, $exit = 0){	
+	echo '<pre>======<br/>';	
+	print_r($data);
+	echo '<br/>======</pre>';
+	if($exit == 1){
+		exit;
+	}		
+}
 
 function logf($data){	
 	$fp = fopen(log_file, "a+");//读写方式打开，将文件指针指向文件末尾。如果文件不存在则尝试创建之。
@@ -92,4 +100,17 @@ function getSuffix($prefix_suffix){
 		return $suffix;
 	}	
 }
+
+function curl_post($url, $data){
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_POST, 1 );
+	//curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);	
+	$result = curl_exec($ch);
+	curl_close($ch);
+	return $result;
+}
+
 
