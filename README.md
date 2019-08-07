@@ -14,7 +14,7 @@
 | liveVdnServer | 互动连麦直播，vdn分发网络		      |     |
 | liveProxyServer | RTSP 拉流服务端     				      |     |
 | videoRecServer | 录制录像功能     				      |     |
-| groupHttpProxyServer | 系统消息及群操作功能     				      |     |
+| groupPushHttpProxy | 系统消息及群操作功能     				      |     |
 
 
 ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) web-supported目录里面是支持web端的服务端程序与自签名证书。do-not-support-web目录里面的服务端程序不支持web端。

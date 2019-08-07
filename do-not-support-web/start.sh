@@ -1,26 +1,65 @@
 #!/bin/bash
 
-git config core.fileMode false #忽略文件权限变化
-chmod +x *Server			#文件加权限
-chmod +x *Proxy
+git config core.fileMode false || echo "git not installed,continue" #忽略文件权限变化
+chmod +x supervise.sh supervise
 
 
+if [ ! -f supervise.msgServer ]; then
+	cp -f supervise supervise.msgServer
+fi
 
-mkdir logs
-chmod -R 777 logs
+if [ ! -f supervise.chatDBServer ]; then
+	cp -f supervise supervise.chatDBServer
+fi
 
-nohup ./msgServer          > logs/msgServer.log 2>&1 &
-nohup ./chatDBServer       > logs/chatDBServer.log 2>&1 &
-nohup ./groupServer        > logs/groupServer.log 2>&1 &
-nohup ./voipServer         > logs/voipServer.log 2>&1 &
-nohup ./chatRoomServer     > logs/chatRoomServer.log 2>&1 &
-nohup ./liveSrcServer      > logs/liveSrcServer.log 2>&1 &
-nohup ./liveVdnServer      > logs/liveVdnServer.log 2>&1 &
-nohup ./liveProxyServer    > logs/liveProxyServer.log 2>&1 &
-nohup ./groupPushHttpProxy > logs/groupPushHttpProxy.log 2>&1 &
+if [ ! -f supervise.groupServer ]; then
+	cp -f supervise supervise.groupServer
+fi
+
+if [ ! -f supervise.chatRoomServer ]; then
+	cp -f supervise supervise.chatRoomServer
+fi
+
+if [ ! -f supervise.voipServer ]; then
+	cp -f supervise supervise.voipServer
+fi
+
+if [ ! -f supervise.liveSrcServer ]; then
+	cp -f supervise supervise.liveSrcServer
+fi
+
+if [ ! -f supervise.liveVdnServer ]; then
+	cp -f supervise supervise.liveVdnServer
+fi
+
+if [ ! -f supervise.liveProxyServer ]; then
+	cp -f supervise supervise.liveProxyServer
+fi
+
+if [ ! -f supervise.groupPushHttpProxy ]; then
+	cp -f supervise supervise.groupPushHttpProxy
+fi
+
+
+./supervise.sh start msgServer
+./supervise.sh start chatDBServer
+./supervise.sh start groupServer
+./supervise.sh start chatRoomServer
+./supervise.sh start voipServer
+./supervise.sh start liveSrcServer
+./supervise.sh start liveVdnServer
+./supervise.sh start liveProxyServer
+./supervise.sh start groupPushHttpProxy
 
 
 ps -aux | grep Server
-ps -aux | grep Proxy
-sleep 3
-head -n 12 logs/msgServer.log
+ps -aux | grep groupPushHttpProxy
+
+echo "=================================================================================="
+echo "Thanks for your support, Please use the following contact information for feedback"
+echo "QQ group: 807242783"
+echo "Github: https://github.com/starRTC"
+echo "TEL: +86 18612946552"
+echo "Enjoy Your Work!"
+echo "=================================================================================="
+

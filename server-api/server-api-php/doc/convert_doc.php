@@ -9,6 +9,8 @@ define('convert_success',     1); //转换成功
 define('convert_failed',      2);
 define('convert_processing',  3);//转换中
 
+logf('get_doc_to_process');
+
 $ret = get_doc();
 if($ret['ret'] != 0){
 	echo 'get_doc_failed:'.$ret['ret'].'\r\n';
