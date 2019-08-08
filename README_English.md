@@ -1,6 +1,6 @@
 # Free private deployment of server programs
 
-The following servers are completely free (developed in C language), which is no authentication, and can be used in Tencent Cloud, Alibaba Cloud or LAN deployment. The following seevers are open now:
+The following servers are completely free (developed in C language), which is no authentication and can be used in Tencent Cloud, Alibaba Cloud or LAN deployment. The following servers are open now:
 
 
 | Server        | Feature           | Remarks  |
@@ -119,7 +119,7 @@ Please pay attention that this service is only available for other services on t
 
 ```java 
 push system information:
-toUsers：all users who need to send a message, separated by commas
+toUsers：all users who need to send a message, which is separated by commas.
 msg： Text message that needs to be sent
 digest： a summary of the text message that needs to be sent for push mode when the user is offline
 http://www.xxx.com:19922/pushSystemMsgToUsers?toUsers=userId1,userId2,userId3,...&msg=xxxx&digest=xxxx
@@ -128,33 +128,36 @@ Push group message (all members):
 http://www.xxx.com:19922/pushGroupMsg?groupId=xxx&msg=xxxx
 ```
 
-下面五个和群有关的接口，在客户端sdk同样有实现，但通过这些接口，服务端可以主动给群服务器同步群成员，或对群成员进行其他操作，请您根据实际需求来选取合适的群成员同步策略。
+The following five groups-related interfaces are also implemented in the client sdk.
+The server can synchronize the group members or perform other operations on the group members actively.
+Please select the appropriate group member synchronization strategy according to actual needs.
+
 ```java 
-同步时不传groupList表示清空这个群的成员
-同步群成员:	
-groupId: 要同步的群id
-groupList: 要同步的群内部的所有用户id，用逗号隔开
-ignoreList： 设置过消息免打扰的素有用户id，用逗号隔开
+Do not pass the parameter groupList means clearing the members of this group when synchronizing.
+Synchronization group members:	
+groupId: group ID
+groupList: All user ids in the group, separated by commas
+ignoreList： all user ids which is set for mute message notification, which is separated by commas.
 http://www.xxx.com:19922/syncGroupList?groupId=xxx&groupList=userId1,userId2,userId3,...&ignoreList=userId1,userIdx,...
 
-添加群好友:   
-groupId: 要操作的群id
-addedUsers: 要添加进的群的所有用户id，用逗号隔开
+Add group members: 
+groupId: group ID
+addedUsers: All user ids of the group to be added,which is separated by commas.
 http://www.xxx.com:19922/addUsersToGroup?groupId=xxx&addedUsers=userId1,userId2,userId3,...
 
-删除群好友:   
-groupId: 要操作的群id
-deledUsers: 需要从群内删除的所有用户id，用逗号隔开
+Delete group members:    
+groupId: group ID
+deledUsers: All user ids that need to be removed from the group, which is separated by commas.
 http://www.xxx.com:19922/delUsersFromGroup?groupId=xxx&deledUsers=userId1,userId2,userId3,...
 
-设置免打扰:	
-groupId: 要操作的群id
-ignoreList: 需要从针对改群添加免打扰的所有用户id，用逗号隔开
+Set mute:	
+groupId: group ID
+ignoreList: All user ids that need to be set mute notification from this group,which is separated by commas.
 http://www.xxx.com:19922/setPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,...
 
-取消免打扰:	
-groupId: 要操作的群id
-ignoreList: 需要从针对改群取消免打扰的所有用户id，用逗号隔开
+Unset mute::	
+groupId: group ID
+ignoreList: All user ids that need to be unset mute notification from this group,which is separated by commas.
 http://www.xxx.com:19922/unsetPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,...
 ```
 
@@ -162,93 +165,93 @@ http://www.xxx.com:19922/unsetPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,
 
 
 
-拉流服务端部署
+Deployment of pull stream server 
 ==
-用于拉取第三方rtsp流(RTMP流暂未开放)，转换为starRTC协议后转发到liveSrcServer，
-然后就可以在各终端(Android,iOS,PC和web)的在线会议或互动直播中播放这个流了。
+The server is used to pull a third-party rtsp stream (RTMP stream is not open yet), and convert the stream to the tream starRTC protocol, then forward the stream to liveSrcServer,
+Then you can play this stream in a meeting room or an interactive live broadcast of each terminal (Android, iOS, PC and web).
 
 ```java  
-后台启动：
+Start the program in the background:
 nohup ./liveProxyServer > liveProxyServer.log 2>&1 &
 ```
 
-测试方法：首先找到一个可以正常播放的rtsp流（也可以使用示例程序里面的默认测试流），
-然后可以打开安卓示例程序，打开设置-》第3方流测试-》新建一个流，填一下名字，和流的rstp地址（也可以不填直接使用默认的测试流），
-同时选择该流是在直播中播放，还是在会议中播放。 然后去直播间或会议室就可以看到拉的视频流画面了。
+Test method: Firstly, you find a rtsp stream that can be played normally (you can also use the default test stream in the demo).
+Secondly, you can open the android demo, open the settings -> "3rd party flow test ->" create a new stream, fill in the name and the stream's rstp address (you can also use the default test stream without filling in).
+At the same time, you need to select whether the stream is played in a live room or in a meeting room. 
+At last, you can go to the live room or meeting room to watch the video stream.
 
 
-也可以自己使用HTTP方式调用：
+You can also call it  by using HTTP:
 
-- 1 创建channelId并拉流（streamType暂时只支持rtsp），接口返回channelId：
+- 1 Create channelId and pull the stream, and the interface will return channelId:
 
 http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&roomLiveType=0&roomId=xxxx&extra=xxxxx 
 
-其中roomId和extra为可选参数
+roomId and extra are optional parameters
 
-- 2 拉流到指定的channelId：
+- 2 Pull the stream to the specified channelId:
 
 http://www.xxx.com:19932/push?streamType=rtsp&streamUrl=rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov&channelId=xxxx
 
-- 3 停止拉流（不删除channelId，仍在列表中存在）：
+- 3 Stop pulling the stream (do not delete the channelId,which still exists in the list)：
 
 http://www.xxx.com:19932/close?channelId=xxxx
 
-- 4 停止拉流，同时删除channelId：
+- 4 Stop pulling the stream and deleting the channelId at the same time:
 
 http://www.xxx.com:19932/delete?channelId=xxxx
 
-需要开放端口
+ Port needed to be open
 ====
-| 服务端        | 端口           | web端需开放端口            | 
+| Server       | port           | Port needed to be open on the web         | 
 | ------------- |:-------------  |:-------------  |
-| msgServer      | 19903(tcp)     | 29991(tcp):https信任测试   | 
-| voipServer     | 10086(udp)  44446(udp):P2P通讯     | 10087(tcp):websocket 10088(udp):webrtc   29992(tcp):https信任测试| 
-| chatRoomServer | 19906(tcp)      | 29993(tcp):https信任测试  | 
-| liveSrcServer  | 19931(udp)       | 19934(tcp):websocket 19935(udp):webrtc 29994(tcp):https信任测试 |
-| liveVdnServer  | 19928(udp)     	 | 19940(tcp):websocket 19941(udp):webrtc 29995(tcp):https信任测试	|
+| msgServer      | 19903(tcp)     | 29991(tcp):https trust test   | 
+| voipServer     | 10086(udp)  44446(udp):P2P communication   | 10087(tcp):websocket 10088(udp):webrtc   29992(tcp):https trust test| 
+| chatRoomServer | 19906(tcp)      | 29993(tcp)::https trust test  | 
+| liveSrcServer  | 19931(udp)       | 19934(tcp):websocket 19935(udp):webrtc 29994(tcp)::https trust test |
+| liveVdnServer  | 19928(udp)     	 | 19940(tcp):websocket 19941(udp):webrtc 29995(tcp)::https trust test	|
 | liveProxyServer |19932(tcp)   	 |   |
 
 
-测试方法
+Test method
 =====
-下载[客户端示例程序](https://docs.starrtc.com/en/download/)，
+Download[client demo](https://docs.starrtc.com/en/download/)，
 
-打开"设置->服务器配置"，然后填写你自己的服务器ip即可（注意不要修改端口号，如果是域名不需要添加“http://”前缀）。
+Open "Settings -> Server Configuration" and fill in your server ip (you should be careful not to change the port number and you do not need to add the "http://" prefix if you use the demo name instead of ip).
 
 
-客户端开发
+Development of client app
 =====
-基于私有部署服务端开发自己的客户端，参见[开发文档](https://docs.starrtc.com/zh-cn/docs/android-3b.html)，
+if you develop your own client app based on a private deployment server，please refer to [development document](https://docs.starrtc.com/zh-cn/docs/android-3b.html)，
 
-示例代码参见：https://docs.starrtc.com/en/download/
+the demo you can refer to：https://docs.starrtc.com/en/download/
 
-服务端开发
+ Development of Server
 =====
-打开配置文件starrtc.conf，修改里面的aecurl的值（目前不支持https地址），开发请参考server-api目录里面的示例代码。
+You can open the configuration file named starrtc.conf and modify the value of aecurl (the server does not support https address currently). Please refer to the demo in the server-api directory for development.
 
 Contact
 =====
 QQ ： 2162498688
 
-邮箱：<a href="mailto:support@starRTC.com">support@starRTC.com</a>
+E-mail：<a href="mailto:support@starRTC.com">support@starRTC.com</a>
 
-手机: 186-1294-6552
+Phone number: 186-1294-6552
 
-微信：starRTC
+Wechat：starRTC
 
-QQ群：807242783
+QQ group ID：807242783
 
-遇到问题请先根据 https://github.com/starrtc/starrtc-server/wiki 自查，还不能解决请加群反馈。
+If you encounter problems, please  refer to the page  https://github.com/starrtc/starrtc-server/wiki firstly, If you still can't solve the problem by adding the QQ group to feedback the problem.
 
-更新记录
+Changelog
 =====
 https://github.com/starrtc/starrtc-server/wiki/Changelog
 
-参考
+Reference
 ==
-[端口连接性测试](https://github.com/starrtc/starrtc-server/wiki/TCP%E4%B8%8EUDP%E7%AB%AF%E5%8F%A3%E8%BF%9E%E6%8E%A5%E6%80%A7%E6%B5%8B%E8%AF%95)
+[Port connectivity test](https://github.com/starrtc/starrtc-server/wiki/TCP%E4%B8%8EUDP%E7%AB%AF%E5%8F%A3%E8%BF%9E%E6%8E%A5%E6%80%A7%E6%B5%8B%E8%AF%95)
 
-[阿里云修改安全组规则](https://help.aliyun.com/document_detail/101471.html)
+[Rules of modifying Ali cloud  security group ](https://help.aliyun.com/document_detail/101471.html)
 
-[腾讯云安全组操作指南](https://cloud.tencent.com/document/product/213/18197)
-
+[Operation Guide of Tencent Cloud Security Group](https://cloud.tencent.com/document/product/213/18197)
