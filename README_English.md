@@ -1,6 +1,6 @@
 # Free private deployment of server programs
 
-The following servers are completely free (developed in C language), which is no authentication and can be used in Tencent Cloud, Alibaba Cloud or LAN deployment. The following servers are open now:
+The following servers are completely free (developed in C language), which is no authentication and can be used in Tencent Cloud, Alibaba Cloud or LAN deployment. Now the following servers are open :
 
 
 | Server        | Feature           | Remarks  |
@@ -8,7 +8,7 @@ The following servers are completely free (developed in C language), which is no
 | voipServer    | One-to-one video call 					  | it needs to work with msgServer |
 | msgServer     | Single chat (such as text chat), private message, signaling      |    |
 | chatDBServer  | Offline message storage      				  |     |
-| groupServer   | group chat      					      | In the case of single chat without group chat, this server does not neet to be started.    |
+| groupServer   | group chat      					      | In the case of one-to-one chat without group chat, this server does not neet to be started.    |
 | chatRoomServer| people chat      					  |     |
 | liveSrcServer | people video conference and push RTMP stream       |     |
 | liveVdnServer | Interactive live broadcast, vdn distribution network		      |     |
@@ -23,15 +23,13 @@ The server program in the do-not-support-web directory does not support the web 
 
 **Support CentOS 64bit，Ubuntu 64bit**. Please install the VM (use bridge mode) or docker test on Windows system.
 
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) 
+![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Deployment(Please switch to root user or execute with sudo)：
 
-Deployment(Please switch to root user or execute with sudo)：
+1:Download the server program: git clone https://github.com/starrtc/starrtc-server.git
+   Then enter the corresponding directory and execute the command:chmod +x *.sh && ./start.sh,and you have finished the deployment.
+   If you want to run a program alone, continue with the steps below.
 
-1：Download the server program: git clone https://github.com/starrtc/starrtc-server.git
-  Then enter the corresponding directory and execute the command:chmod +x *.sh && ./start.sh,and you have finished the deployment.
-	If you want to run a program alone, continue with the steps below.
-
-2:Go to the appropriate directory and add executable permissions to all server programs: chmod +x *Server 
+2:Go to the appropriate directory to add executable permissions to all server programs: chmod +x *Server 
 
 3:Deploy each server program as follows:
 
@@ -55,7 +53,7 @@ Deployment of IM server
 IM full service contains 3 server programs. They are:
 
 The message server:msgServer, the offline message data server:chatDBServer, and the group management server:groupServer.
-the servers can be started separately.
+These servers can be started separately.
 
 If you just need one-to-one chat, you do not need to start groupServer.
 
