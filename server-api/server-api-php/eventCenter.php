@@ -17,6 +17,7 @@ require_once($aec_dir . '/include/group_del.php');
 require_once($aec_dir . '/include/group_join.php');
 require_once($aec_dir . '/include/group_quit.php');
 require_once($aec_dir . '/include/channel.php');
+require_once($aec_dir . '/include/user.php');
 
 $data = array_key_exists('data', $_REQUEST) ? $_REQUEST['data'] : 0;//接收服务端程序传过来的数据
 if(empty($data)){
@@ -38,6 +39,9 @@ if(empty($action)){
 
 
 
+
+
+save_online_user($dataArr);
 process_voip_event($action,     $dataArr);
 process_chatroom_event($action, $dataArr);
 process_group_event($action, 	$dataArr);
@@ -50,7 +54,10 @@ echo_0('unkown action:'.$action);
 
 
 
-
+function save_online_user($dataArr){//记录在线用户
+	$userId = array_key_exists('userId', $dataArr)  ? $dataArr['userId']  : 0;
+	_save_online_user($userId);		
+}
 
 
 
@@ -59,7 +66,7 @@ echo_0('unkown action:'.$action);
 //=========================VOIP(一对一)事件通知==================
 //https://docs.starrtc.com/zh-cn/docs/aec-voip.html
 function process_voip_event($action, $dataArr){
-	$userId    = array_key_exists('userId', $dataArr)    ? $dataArr['userId']    : 0;
+	$userId    = array_key_exists('userId', $dataArr)  ? $dataArr['userId']    : 0;
 	
 	if(!strcasecmp($action, 'AEC_VOIP_USER_ONLINE')){//申请voip通话
 		//TODO： 可检查用户余额是否足够  

@@ -4,10 +4,14 @@ require_once($dir . '/config.php');
 
 
 
+$groupId     = array_key_exists('groupId', $_REQUEST) ? $_REQUEST['groupId'] : 0;
+$contentData = array_key_exists('msg', $_REQUEST) ? $_REQUEST['msg'] : 0;
+if(empty($groupId) ||empty($contentData)){
+	echoErr('missing args');
+}	
 
 
 
-$groupId = 9;
 
 $msgArr = array();
 $msgArr['fromId']      = 'system'; //发送消息的人
@@ -17,7 +21,7 @@ $msgArr['time']        = $milliseconds; //消息时间，毫秒
 $msgArr['msgIndex']    = $milliseconds; //消息编号
 $msgArr['type']        = 1;
 $msgArr['code']        = 0;
-$msgArr['contentData'] = '群消息测试';
+$msgArr['contentData'] = $contentData;
 $msg = json_encode($msgArr);
 
 

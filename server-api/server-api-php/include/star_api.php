@@ -6,12 +6,12 @@ define('proxyUrl', 'http://demo.starrtc.com:19922/');
 
 
 //push系统消息
-function pushSystemMsgToUsers($msg, $digest, $users){		
+function pushSystemMsgToUsers($msg, $digest, $toUsers){		
 	$url = proxyUrl.'pushSystemMsgToUsers';	
 	$data = array (			
 		'msg'     => $msg,
 		'digest'  => $digest, //摘要
-		'toUsers' => $users	 //	用户，用逗号隔开	
+		'toUsers' => $toUsers	 //	用户，用逗号隔开	
 	);
 	
 	$ret = curl_post($url, $data);// 成功返回的是json {"status":"1"}

@@ -33,17 +33,20 @@ if($state == convert_success){
 	$full_path = $local_path . $doc_id;	
 	$count = count(glob($full_path . '/*.jpg'));
 	if($count == 0){
-		echoErr('process error');	
+		echoErr("$id:process error");	
 	}
-
 	$info   = array();
 	$index  = 0;
-	for($i=0; $i<$count; $i++){
-		$info[$index++] = $http_path . '/starRTC-' . $i . '.jpg';	
-	}
+	if($count == 1){//只有一张图片时文件名为starRTC.jpg
+		$info[$index++] = $http_path . '/starRTC.jpg';	
+	}else{		
+		for($i=0; $i<$count; $i++){
+			$info[$index++] = $http_path . '/starRTC-' . $i . '.jpg';	
+		}		
+	}	
 	echoK($info);	
 }elseif($state == convert_failed){
-	echoErr('process error');	
+	echoErr("$id:process error:convert_failed");	
 }else{
 	echoErr('processing');
 }

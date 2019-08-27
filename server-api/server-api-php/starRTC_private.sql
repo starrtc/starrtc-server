@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2019-07-29 06:33:03
+-- 生成日期: 2019-08-08 03:24:09
 -- 服务器版本: 5.6.36
 -- PHP 版本: 5.4.16
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `channels` (
   PRIMARY KEY (`id`),
   KEY `channelId` (`channelId`),
   KEY `ownerId` (`relateId`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5293 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5303 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `chatRoom` (
   KEY `roomId` (`roomId`),
   KEY `userId` (`userId`),
   KEY `state` (`state`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4708 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4721 ;
 
 -- --------------------------------------------------------
 
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `docs` (
   `state` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '成功1失败2',
   `ctime` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=336 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin AUTO_INCREMENT=14 ;
 
 -- --------------------------------------------------------
 
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `ctime` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `creator` (`creator`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100452 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=100458 ;
 
 -- --------------------------------------------------------
 
@@ -123,7 +123,21 @@ CREATE TABLE IF NOT EXISTS `list` (
   KEY `type` (`type`),
   KEY `roomId` (`roomId`),
   KEY `userId` (`userId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=670 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=696 ;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `online_users`
+--
+
+CREATE TABLE IF NOT EXISTS `online_users` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userId` varchar(100) NOT NULL,
+  `last_online_ts` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -137,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `userGroup` (
   `groupList` mediumtext NOT NULL,
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=413 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=422 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -104,7 +104,6 @@ nohup ./videoRecServer > videoRecServer.log 2>&1 &
 
 请注意该服务仅供内网其他服务使用，不要将19922端口暴露到外网！
 
-
 ```java 
 push系统消息:
 toUsers：需要发送消息的所有用户，用逗号隔开
@@ -118,32 +117,28 @@ http://www.xxx.com:19922/pushGroupMsg?groupId=xxx&msg=xxxx
 
 下面五个和群有关的接口，在客户端sdk同样有实现，但通过这些接口，服务端可以主动给群服务器同步群成员，或对群成员进行其他操作，请您根据实际需求来选取合适的群成员同步策略。
 ```java 
-同步时不传groupList表示清空这个群的成员
 同步群成员:	
-groupId: 要同步的群id
-groupList: 要同步的群内部的所有用户id，用逗号隔开
-ignoreList： 设置过消息免打扰的素有用户id，用逗号隔开
+groupId: 群id
+groupList:   所有群成员，用逗号隔开，不传groupList表示清空这个群的成员
+ignoreList： 对该群设置了消息免打扰的群成员id，用逗号隔开
 http://www.xxx.com:19922/syncGroupList?groupId=xxx&groupList=userId1,userId2,userId3,...&ignoreList=userId1,userIdx,...
 
-添加群好友:   
-groupId: 要操作的群id
+添加群成员:   
 addedUsers: 要添加进的群的所有用户id，用逗号隔开
 http://www.xxx.com:19922/addUsersToGroup?groupId=xxx&addedUsers=userId1,userId2,userId3,...
 
-删除群好友:   
-groupId: 要操作的群id
+删除群成员:   
 deledUsers: 需要从群内删除的所有用户id，用逗号隔开
 http://www.xxx.com:19922/delUsersFromGroup?groupId=xxx&deledUsers=userId1,userId2,userId3,...
 
 设置免打扰:	
-groupId: 要操作的群id
-ignoreList: 需要从针对改群添加免打扰的所有用户id，用逗号隔开
+ignoreList: 对该群设置消息免打扰(不接收群消息)的所有用户id，用逗号隔开
 http://www.xxx.com:19922/setPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,...
 
 取消免打扰:	
-groupId: 要操作的群id
-ignoreList: 需要从针对改群取消免打扰的所有用户id，用逗号隔开
+ignoreList: 对该群取消免打扰(接收群消息)的所有用户id，用逗号隔开
 http://www.xxx.com:19922/unsetPushIgnore?groupId=xxx&ignoreList=userId1,userIdx,...
+
 ```
 
 

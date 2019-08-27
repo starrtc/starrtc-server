@@ -67,8 +67,7 @@ function logf($data){
 	$fp = fopen(log_file, "a+");//读写方式打开，将文件指针指向文件末尾。如果文件不存在则尝试创建之。
 	$time = date('Y-m-d H:i:s'); 
 	fwrite($fp, $time.'  '.$data."\r\n");//记得a+w
-	fclose($fp);
-	
+	fclose($fp);	
 }
 
 
