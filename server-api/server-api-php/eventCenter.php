@@ -87,6 +87,13 @@ function process_voip_event($action, $dataArr){
 		$userId2    = array_key_exists('userId2', $dataArr) ? $dataArr['userId2']    : 0;
 		logf("$userId 与 $userId2 仍在通话中");
 		echo_1('success');		
+		
+		
+		
+		//挂断示例
+		
+		
+		
 	}
 
 	if(!strcasecmp($action, 'AEC_VOIP_USER_HANGUP')){//voip挂断
