@@ -89,4 +89,145 @@ function is_user_online($userId){
 }
 
 
+//判断用户的类型
+function isUserType($userId, $utype_to_check){
+	global $g_writeMdb;	
+	try{			
+		$sql = "select utype from users where userId = ? limit 1";			
+		if(!($pstmt = $g_writeMdb->prepare($sql))){				
+			return 12;
+		}		
+		if($pstmt->execute(array($userId))){		
+			$result = $pstmt->fetchAll();        
+			$resNum = count($result);	
+			if($resNum == 0){	
+				return 14;	
+			}			  
+			$utype    = $result[0][0];
+			if($utype & $utype_to_check){
+				return 0;
+			}else{
+				return 15;
+			}			  		
+		}else{			
+			return 13; 
+		}    
+	}catch(PDOException $e){		
+		return 11;
+	}
+	return 10;	
+}
 
+//获取用户单价
+function getPricePerMin($userId){
+	global $g_writeMdb;	
+    $retArr = array();	
+
+    try{
+        $sql = "select price from users where userId = ? limit 1";
+        if(!($pstmt = $g_writeMdb->prepare($sql))){
+            $retArr['ret'] = 12;return $retArr;
+        }
+        if($pstmt->execute(array($userId))){
+            $result = $pstmt->fetchAll();
+            $resNum = count($result);
+            if($resNum == 0){
+                $retArr['ret'] = 14;return $retArr;
+            }
+            $price = $result[0][0];          
+            $retArr['ret']  = 0;
+            $retArr['data'] = $price;
+            return $retArr;
+        }else{
+            $retArr['ret'] = 13;return $retArr;
+        }
+    }catch(PDOException $e){
+        $retArr['ret'] = 11;return $retArr;
+    }
+    $retArr['ret'] = 10;return $retArr;
+}
+
+
+function getBalance($userId){
+	global $g_writeMdb;	
+    $retArr = array();	
+
+    try{
+        $sql = "select balance from users where userId = ? limit 1";
+        if(!($pstmt = $g_writeMdb->prepare($sql))){
+            $retArr['ret'] = 12;return $retArr;
+        }
+        if($pstmt->execute(array($userId))){
+            $result = $pstmt->fetchAll();
+            $resNum = count($result);
+            if($resNum == 0){
+                $retArr['ret'] = 14;return $retArr;
+            }
+            $balance = $result[0][0];          
+            $retArr['ret']  = 0;
+            $retArr['data'] = $balance;
+            return $retArr;
+        }else{
+            $retArr['ret'] = 13;return $retArr;
+        }
+    }catch(PDOException $e){
+        $retArr['ret'] = 11;return $retArr;
+    }
+    $retArr['ret'] = 10;return $retArr;
+}
+
+
+function update_user_income($userId, $balance){	
+	global $g_writeMdb;			
+	try{
+		$sql = "update users set balance = balance + ? where userId = ? limit 1";
+		if(!($pstmt = $g_writeMdb->prepare($sql))){ 
+			return 12;
+		}   
+		if($pstmt->execute(array($balance, $userId))){
+			return 0;	
+		}else{
+			return 13;
+		}		
+	}catch(PDOException $e){
+		return 11;
+	}	
+    return 10;
+}
+
+function reduce_user_balance($userId, $balance){	
+	global $g_writeMdb;			
+	try{
+		$sql = "update users set balance = balance - ? where userId = ? limit 1";
+		if(!($pstmt = $g_writeMdb->prepare($sql))){ 
+			return 12;
+		}   
+		if($pstmt->execute(array($balance, $userId))){
+			return 0;	
+		}else{
+			return 13;
+		}		
+	}catch(PDOException $e){
+		return 11;
+	}	
+    return 10;
+}
+
+
+function update_voip_duration($userId){
+	global $g_writeMdb;	
+    try{
+        $sql = "update users set voip_duration = voip_duration + 1 where userId = ? limit 1";
+        if(!($pstmt = $g_writeMdb->prepare($sql))){
+            return 12;
+        }
+        if($pstmt->execute(array($userId))){
+            return 0;
+        }else{
+            return 13;
+        }
+    }catch(PDOException $e){
+        return 11;
+    }
+    return 10;
+}

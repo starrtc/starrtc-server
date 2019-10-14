@@ -85,14 +85,79 @@ function process_voip_event($action, $dataArr){
 		
 		//{"ts":"1561083596","action":"AEC_VOIP_USER_PLAYING","userId":"892500","userId2":"500660","time":"1561083596"}
 		$userId2    = array_key_exists('userId2', $dataArr) ? $dataArr['userId2']    : 0;
-		logf("$userId 与 $userId2 仍在通话中");
-		echo_1('success');		
+		logf("$userId 与 $userId2 仍在通话中");			
+			
 		
+		//挂断与付费示例		
+		$voip_num       = 0;  
+		$is_userId_voip = isUserType($userId, VOIP); 
+		if($is_userId_voip == 0){
+			$voip_num++;
+		}
+		$is_userId2_voip = isUserType($userId2, VOIP); 
+		if($is_userId2_voip == 0){
+			$voip_num++;
+		}
+		if($voip_num == 0){
+			echo_0('must one user can voip');  //必须有一方有voip功能
+		}		
 		
-		
-		//挂断示例
-		
-		
+		//如果userId2能voip，由于是userId呼的userId2,需要获取userId2的价格，并扣userId的钱
+		if($is_userId2_voip == 0){
+			$ret = getPricePerMin($userId2);
+			if($ret['ret'] != 0){
+				echo_0("$userId2:get price fail");   
+			}
+			$price_per_min = $ret['data'];
+			
+			$ret = getBalance($userId);
+			$userId_Balance = $ret['data'];
+			if($userId_Balance <= 0){
+				echo_0('VOIP_MOONSERVER_ERRID_CALLER_FEE_INSUFFICIENT'); 	//余额不足	
+			}
+			$new_balance = $userId_Balance - $price_per_min;
+			if($new_balance < 0){				
+				$price_per_min = $userId_Balance;//如果余额不足，只扣余额
+			}		
+			reduce_user_balance($userId, $price_per_min);
+			update_user_income($userId2, $price_per_min);
+			
+			//保存通话时长
+			update_voip_duration($userId);
+			update_voip_duration($userId2);
+			if($new_balance <= 0){
+				echo_0('VOIP_MOONSERVER_ERRID_CALLER_FEE_INSUFFICIENT'); 		
+			}else{
+				echo_1('success');
+			}  			
+		}else if($is_userId_voip == 0){//如果userId2不能voip，而且userId能voip，那获取userId的价格，扣userId2的钱
+			$ret = getPricePerMin($userId);
+			if($ret['ret'] != 0){
+				echo_0("$userId:get price fail");   
+			}
+			$price_per_min = $ret['data'];
+			
+			$ret = getBalance($userId2);
+			$userId2_Balance = $ret['data'];
+			if($userId2_Balance <= 0){
+				echo_0('VOIP_MOONSERVER_ERRID_CALLER_FEE_INSUFFICIENT'); 	//余额不足	
+			}
+			$new_balance = $userId2_Balance - $price_per_min;
+			if($new_balance < 0){				
+				$price_per_min = $userId2_Balance;//如果余额不足，只扣余额
+			}	
+			reduce_user_balance($userId2, $price_per_min);
+			update_user_income($userId, $price_per_min);
+			//保存通话时长
+			update_voip_duration($userId);
+			update_voip_duration($userId2);
+			if($new_balance <= 0){
+				echo_0('VOIP_MOONSERVER_ERRID_CALLER_FEE_INSUFFICIENT'); 		
+			}else{
+				echo_1('success');
+			}  	
+			
+		}	
 		
 	}
 
