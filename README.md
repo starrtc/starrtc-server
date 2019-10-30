@@ -85,13 +85,25 @@ liveVdn服务端部署
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 ```
 
-录制服务端部署
+录制服务端(videoRecServer)部署
 ==
-目前用于liveSrcServer和voipServer的视频录像功能，目前为测试版，输出为ts切片，暂时没有音频，后续会加上。
+目前用于liveSrcServer和voipServer的视频录像功能，目前为测试版，输出为ts文件，支持自定义切片或不切片，音频只支持AAC格式。
 
-文件目录格式为：./RECFOLDER/用户名/业务服务名_毫秒数_切片序号.ts，如./RECFOLDER/userId/liveSrcServer_873692718_1.ts
+videoRecServer默认是切片模式，30s一片，若不切片，请在程序同级目录中新建starrtc.conf文本文件，写入recSegMode=off，即关闭切片模式。
 
-开启此服务就会打开录制功能，如果想停止录制，可以关闭此服务。
+文件目录格式为：
+
+在线会议或互动直播:
+
+./RECFOLDER/liveChannels/channelId/用户名_切片序号.ts，如./RECFOLDER/liveChannels/WzNWuVjLc1KaaKa/tom_0.ts
+
+一对一视频通话(VOIP):
+
+./RECFOLDER/voips/sessionId/用户名_切片序号.ts，如./RECFOLDER/voips/1572429042573/tom_0.ts
+
+其中，voip的sessionId在移动端SDK中获取得到，详见代码。
+
+
 
 ```java  
 后台启动：

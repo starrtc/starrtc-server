@@ -93,15 +93,27 @@ Start the program in the background:
 nohup ./liveVdnServer > liveVdnServer.log 2>&1 &
 ```
 
-Deployment of recording server 
+Deployment of recording server (videoRecServer)
 ==
-The video recording function is used for liveSrcServer and voipServer currently,which 
-is a beta version now. And the output is ts slice, while there is no audio at the moment that will be added later.
+The video recording function is used for liveSrcServer and voipServer currently,And the output is ts format, the codec of audio only support AAC.
+
+The default mode of saved file is sliced ts segment, you can also choose no segment mode by following step:
+
+Create a new text file called starrtc.conf in the same directory, add a new line: recSegMode=off, that means to disable segment mode.
 
 
-The format of file directory is：./RECFOLDER/username/serviceName_NumberOfMilliseconds_SliceNumber.ts，such as:./RECFOLDER/userId/liveSrcServer_873692718_1.ts
+The format of file directory is：
 
-The recording function will work if startup this server. And if you want to stop recording, you can shut down the server.
+liveSrcServer:
+
+./RECFOLDER/liveChannels/channelId/userId_sliceIndex.ts，such as ./RECFOLDER/liveChannels/WzNWuVjLc1KaaKa/tom_0.ts
+
+voipServer:
+
+./RECFOLDER/voips/sessionId/userId_sliceIndex.ts，such as ./RECFOLDER/voips/1572429042573/tom_0.ts
+
+The voip sessionId is obtained in the mobile SDK, see the code.
+
 
 ```java  
 Start the program in the background:
