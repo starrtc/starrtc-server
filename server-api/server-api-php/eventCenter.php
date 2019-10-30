@@ -56,7 +56,8 @@ echo_0('unkown action:'.$action);
 
 function save_online_user($dataArr){//记录在线用户
 	$userId = array_key_exists('userId', $dataArr)  ? $dataArr['userId']  : 0;
-	_save_online_user($userId);		
+	_save_online_user($userId);	
+	save_user($userId);//测试用，用于保存用户
 }
 
 

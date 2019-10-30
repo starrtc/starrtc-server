@@ -46,6 +46,40 @@ function _save_online_user($userId){
 	return 10;
 }
 
+
+//仅做测试，用于保存用户
+function save_user($userId){
+	global $g_writeMdb;	
+	try{			
+		$sql = "select id from users where userId = ? limit 1";
+		if(!($pstmt = $g_writeMdb->prepare($sql))){           
+            return 13;    
+        }
+		if($pstmt->execute(array($userId))){
+			$result = $pstmt->fetchAll();        
+			$resNum = count($result);			
+			if($resNum == 0){
+				$ctime = date('Y-m-d H:i:s'); 		
+				$sql = "insert into users (userId, ctime) values (?,?)";
+				if(!($pstmt = $g_writeMdb->prepare($sql))){           
+					return 18;    
+				} 
+				if($pstmt->execute(array($userId, $ctime))){				
+					return 0;
+				}else{
+					return 19;
+				}					
+			}			
+			return 0;	
+		}else{
+			return 14;
+		} 				   
+	}catch(PDOException $e){		
+		return 11;
+	}	
+	return 10;
+}
+
 //返回0表示在线
 function is_user_online($userId){
 	global $g_writeMdb;	

@@ -22,8 +22,8 @@ define('doc_upload_url', 'https://www.starrtc.com/aec/uploads/');# 文档的访�
 //用户的类型
 define('NORMAL',         1);//普通用户
 define('VOIP',           2);//开通了voip功能的用户，才能被呼叫
-
-
+define('VIP1',           4);
+define('VIP2',           8);
 
 
 define('GROUP_PUSH',   	  0); 
