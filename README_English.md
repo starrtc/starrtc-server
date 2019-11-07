@@ -106,13 +106,13 @@ The format of file directory is：
 
 liveSrcServer:
 
-./RECFOLDER/liveChannels/channelId/userId_sliceIndex.ts，such as ./RECFOLDER/liveChannels/WzNWuVjLc1KaaKa/tom_0.ts
+./RECFOLDER/liveChannels/userId/resSessionId_userId_segmentIndex.ts，如./RECFOLDER/liveChannels/tom/1573119917990_tom_0.ts
 
 voipServer:
 
-./RECFOLDER/voips/sessionId/userId_sliceIndex.ts，such as ./RECFOLDER/voips/1572429042573/tom_0.ts
+./RECFOLDER/voips/userId/resSessionId_userId_segmentIndex.ts，如./RECFOLDER/voips/tom/1573119917990_tom_0.ts
 
-The voip sessionId is obtained in the mobile SDK, see the code.
+The sessionId is obtained in the mobile SDK, see android docs.
 
 
 ```java  
